@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export type Locale = "en" | "fa" | "tr";
 export const LOCALES: { code: Locale; label: string; dir: "ltr" | "rtl" }[] = [
@@ -26,6 +26,8 @@ const dict = {
     nav_navigator: "AI Navigator",
     nav_legal: "Legal Desk",
     nav_pitch: "Pitch",
+    nav_sponsorship: "Sponsorship",
+    nav_telegram: "Telegram",
     nav_apply: "Apply",
     footer_1: "Startup Landing Türkiye — From Exhibition to Ecosystem.",
     footer_2: "Istanbul • Ankara • İzmir — Hotels × Corporates × Startups × Investors × AI",
@@ -33,6 +35,7 @@ const dict = {
     hero_badge: "Istanbul Pilot • GITEX AI Türkiye, 9–10 Sep 2026",
     hero_title_1: "We don't import startups to Türkiye.",
     hero_title_2: "We import deal flow.",
+    hero_tagline: "Startup = supply · Turkish companies = demand · Hotels = infrastructure · Investors = capital · Platform = coordination",
     hero_desc: "A cross-border startup landing infrastructure that turns unused hotel capacity and corporate sponsorship into a structured pathway: Exhibition → Landing → Company → PoC → Investment → Growth.",
     cta_startup: "Apply as a Startup",
     cta_hotel: "Become a Hotel Partner",
@@ -103,6 +106,8 @@ const dict = {
     nav_navigator: "دستیار هوشمند",
     nav_legal: "میز حقوقی",
     nav_pitch: "پیچ‌دک",
+    nav_sponsorship: "اسپانسری",
+    nav_telegram: "تلگرام",
     nav_apply: "ثبت‌نام",
     footer_1: "لندینگ استارتاپی ترکیه — از نمایشگاه تا اکوسیستم.",
     footer_2: "استانبول • آنکارا • ازمیر — هتل × شرکت × استارتاپ × سرمایه‌گذار × هوش مصنوعی",
@@ -110,6 +115,7 @@ const dict = {
     hero_badge: "پایلوت استانبول • GITEX AI Türkiye، ۹–۱۰ سپتامبر ۲۰۲۶",
     hero_title_1: "ما استارتاپ به ترکیه وارد نمی‌کنیم.",
     hero_title_2: "ما Deal Flow وارد می‌کنیم.",
+    hero_tagline: "استارتاپ = عرضه · شرکت‌های ترکیه‌ای = تقاضا · هتل‌ها = زیرساخت · سرمایه‌گذاران = سرمایه · پلتفرم = هماهنگی",
     hero_desc: "زیرساخت فرامرزی لندینگ استارتاپ که ظرفیت خالی هتل‌ها و اسپانسری شرکت‌ها را به یک مسیر ساختاریافته تبدیل می‌کند: نمایشگاه ← لندینگ ← شرکت ← PoC ← سرمایه ← رشد.",
     cta_startup: "ثبت‌نام استارتاپ",
     cta_hotel: "شریک هتلی شوید",
@@ -179,6 +185,8 @@ const dict = {
     nav_navigator: "AI Navigatör",
     nav_legal: "Hukuk Masası",
     nav_pitch: "Sunum",
+    nav_sponsorship: "Sponsorluk",
+    nav_telegram: "Telegram",
     nav_apply: "Başvur",
     footer_1: "Startup Landing Türkiye — Fuardan Ekosisteme.",
     footer_2: "İstanbul • Ankara • İzmir — Oteller × Kurumsallar × Startuplar × Yatırımcılar × AI",
@@ -186,6 +194,7 @@ const dict = {
     hero_badge: "İstanbul Pilotu • GITEX AI Türkiye, 9–10 Eylül 2026",
     hero_title_1: "Türkiye'ye startup ithal etmiyoruz.",
     hero_title_2: "Deal flow ithal ediyoruz.",
+    hero_tagline: "Startup = arz · Türk şirketleri = talep · Oteller = altyapı · Yatırımcılar = sermaye · Platform = koordinasyon",
     hero_desc: "Kullanılmayan otel kapasitesini ve kurumsal sponsorluğu yapılandırılmış bir yola dönüştüren sınır ötesi startup landing altyapısı: Fuar → Landing → Şirket → PoC → Yatırım → Büyüme.",
     cta_startup: "Startup Olarak Başvur",
     cta_hotel: "Otel Ortağı Ol",
@@ -241,9 +250,22 @@ const dict = {
 
 export type Dict = (typeof dict)["en"];
 
+export const DEFAULT_LOCALE: Locale = "tr";
+
+function isLocale(v: unknown): v is Locale {
+  return v === "en" || v === "fa" || v === "tr";
+}
+
+/** Resolution order: explicit cookie → browser Accept-Language → default (Turkish). */
 export async function getLocale(): Promise<Locale> {
   const c = (await cookies()).get("locale")?.value;
-  return c === "fa" || c === "tr" ? c : "en";
+  if (isLocale(c)) return c;
+  const al = (await headers()).get("accept-language") ?? "";
+  for (const part of al.split(",")) {
+    const code = part.trim().slice(0, 2).toLowerCase();
+    if (isLocale(code)) return code;
+  }
+  return DEFAULT_LOCALE;
 }
 
 export async function getT() {

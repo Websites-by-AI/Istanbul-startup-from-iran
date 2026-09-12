@@ -24,6 +24,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     { href: "/investors", label: t.nav_investors },
     { href: "/navigator", label: t.nav_navigator },
     { href: "/legal", label: t.nav_legal },
+    { href: "/sponsorship", label: t.nav_sponsorship },
+    { href: "/telegram", label: t.nav_telegram },
     { href: "/pitch", label: t.nav_pitch },
   ];
 

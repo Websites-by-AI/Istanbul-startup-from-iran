@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { db } from "@/db";
 import { navigatorMessages } from "@/db/schema";
 import { runAgent, isAgent, type Lang } from "@/lib/navigator";
+import { getLocale } from "@/lib/i18n";
 import { eq, and, asc } from "drizzle-orm";
-
-async function localeFromCookie(): Promise<Lang> {
-  const c = (await cookies()).get("locale")?.value;
-  return c === "fa" || c === "tr" ? c : "en";
-}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -29,7 +24,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "agent and question are required" }, { status: 400 });
   }
   const startupId = body.startupId ? Number(body.startupId) : null;
-  const locale: Lang = body.lang === "fa" || body.lang === "tr" || body.lang === "en" ? body.lang : await localeFromCookie();
+  const locale: Lang = body.lang === "fa" || body.lang === "tr" || body.lang === "en" ? body.lang : await getLocale();
   const answer = await runAgent(body.agent, body.question.trim(), startupId, locale);
   if (startupId) {
     await db.insert(navigatorMessages).values([

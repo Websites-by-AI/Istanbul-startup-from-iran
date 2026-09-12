@@ -35,6 +35,9 @@ export default async function LegalPage({ searchParams }: { searchParams: Promis
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <PageHeader eyebrow={t.legal_eyebrow} title={t.legal_title} desc={t.legal_desc} />
+      <Link href="/legal/rules" className="mb-6 inline-block rounded-lg border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-400/20">
+        {locale === "fa" ? "⚖️ قواعد حقوقی ترکیه + مشاور مسیر ←" : locale === "tr" ? "⚖️ Türkiye kural kitabı + Yol Danışmanı →" : "⚖️ Türkiye rulebook + Pathway Advisor →"}
+      </Link>
 
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[

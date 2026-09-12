@@ -83,7 +83,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <p className="mt-10 font-mono text-sm text-slate-500">
-            Startup = supply · Turkish companies = demand · Hotels = infrastructure · Investors = capital · Platform = coordination
+            {t.hero_tagline}
           </p>
         </div>
       </section>

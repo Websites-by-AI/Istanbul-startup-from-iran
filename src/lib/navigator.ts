@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { scoreCorporate, scoreInvestor } from "@/lib/matching";
 import { LANDING_STEPS, money } from "@/lib/ui";
 import type { Startup } from "@/db/schema";
+import { LEGAL_RULES, recommendPathway } from "@/lib/legalRules";
 
 export type AgentKey = "legal" | "desk" | "investor" | "market" | "media" | "match" | "schedule";
 export type Lang = "en" | "fa" | "tr";
@@ -24,13 +25,13 @@ const AGENT_DEFS: Record<AgentKey, { icon: string; name: Tri; desc: Tri; prompts
     icon: "⚖️",
     name: { en: "Legal AI", fa: "دستیار حقوقی", tr: "Hukuk AI" },
     desc: { en: "Documents, entity structure, visa pathways (guidance only).", fa: "مدارک، ساختار شرکت، مسیرهای ویزا (فقط راهنمایی).", tr: "Belgeler, şirket yapısı, vize yolları (yalnızca rehberlik)." },
-    prompts: { en: ["What documents do we need before landing?", "Subsidiary or sister company?", "Can the sponsor guarantee a kimlik?"], fa: ["قبل از ورود چه مدارکی لازم است؟", "زیرمجموعه یا Sister Company؟", "آیا اسپانسر می‌تواند کیملیک تضمین کند؟"], tr: ["Landing öncesi hangi belgeler gerekli?", "Bağlı ortaklık mı kardeş şirket mi?", "Sponsor kimlik garanti edebilir mi?"] },
+    prompts: { en: ["Which legal route fits a 3-person team?", "How long can Iranians stay visa-free?", "Does forming a company give a work permit?", "What is the Türkiye Tech Visa?", "Can Iranian lawyers practise in Türkiye?", "Can the sponsor guarantee a kimlik?"], fa: ["کدام مسیر حقوقی برای تیم ۳ نفره مناسب است؟", "ایرانی‌ها چند روز بدون ویزا می‌مانند؟", "آیا ثبت شرکت اجازه کار می‌دهد؟", "Tech Visa ترکیه چیست؟", "آیا وکیل ایرانی می‌تواند در ترکیه وکالت کند؟", "آیا اسپانسر می‌تواند کیملیک تضمین کند؟"], tr: ["3 kişilik ekip için hangi yol uygun?", "İranlılar vizesiz ne kadar kalabilir?", "Şirket kurmak çalışma izni verir mi?", "Türkiye Tech Visa nedir?", "İranlı avukatlar Türkiye'de çalışabilir mi?", "Sponsor kimlik garanti edebilir mi?"] },
   },
   desk: {
     icon: "🏛️",
     name: { en: "Legal Desk AI", fa: "دستیار میز حقوقی", tr: "Hukuk Masası AI" },
     desc: { en: "Iran–Türkiye Legal Desk: bootcamps, assessment status, cost & candidate hotels.", fa: "میز حقوقی ایران–ترکیه: بوت‌کمپ‌ها، وضعیت ارزیابی، هزینه و هتل‌های کاندید.", tr: "İran–Türkiye Hukuk Masası: bootcampler, değerlendirme durumu, maliyet ve aday oteller." },
-    prompts: { en: ["How does the Legal Desk work?", "Show upcoming legal bootcamps", "What is our legal assessment status?", "Cost and candidate hotels for our team"], fa: ["میز حقوقی چطور کار می‌کند؟", "بوت‌کمپ‌های حقوقی را نشان بده", "وضعیت ارزیابی حقوقی ما چیست؟", "هزینه و هتل‌های کاندید تیم ما"], tr: ["Hukuk Masası nasıl çalışır?", "Yaklaşan hukuk bootcamplerini göster", "Hukuki değerlendirme durumumuz ne?", "Ekibimiz için maliyet ve aday oteller"] },
+    prompts: { en: ["How does the Legal Desk work?", "Commercial models for the legal partner (A–D)", "What do we ask from the legal group and what do we provide?", "Pilot metrics for the legal partnership", "Three questions for the first meeting", "AI vs legal advice — safety principle", "Show upcoming legal bootcamps", "What is our legal assessment status?", "Cost and candidate hotels for our team"], fa: ["میز حقوقی چطور کار می‌کند؟", "مدل‌های همکاری تجاری با گروه حقوقی (A تا D)", "از گروه حقوقی چه می‌خواهیم و چه می‌دهیم؟", "شاخص‌های پایلوت همکاری حقوقی", "سه سؤال جلسه اول", "اصل ایمنی: هوش مصنوعی در برابر مشاوره حقوقی", "بوت‌کمپ‌های حقوقی را نشان بده", "وضعیت ارزیابی حقوقی ما چیست؟", "هزینه و هتل‌های کاندید تیم ما"], tr: ["Hukuk Masası nasıl çalışır?", "Hukuk ortağı için ticari modeller (A–D)", "Hukuk grubundan ne istiyoruz, ne sağlıyoruz?", "Hukuk ortaklığı pilot metrikleri", "İlk toplantı için üç soru", "AI ve hukuki tavsiye — güvenlik ilkesi", "Yaklaşan hukuk bootcamplerini göster", "Hukuki değerlendirme durumumuz ne?", "Ekibimiz için maliyet ve aday oteller"] },
   },
   match: {
     icon: "🤝",
@@ -72,7 +73,7 @@ export function agentsFor(lang: Lang): AgentMeta[] {
 /** Language of the reply: script wins; otherwise clear Turkish/English markers; otherwise the site locale. */
 export function detectLang(q: string, fallback: Lang = "en"): Lang {
   if (/[\u0600-\u06FF]/.test(q)) return "fa";
-  const t = q.trim();
+  const t = q.trim().replace(/t[üu]rkiye|istanbul|i̇stanbul|izmir|i̇zmir|ltd\. ?şti|a\.ş/gi, "");
   if (/[çğışöüÇĞİŞÖÜ]/.test(t)) return "tr";
   if (/\b(nasıl|nedir|hangi|için|bize|bizim|ekibimiz|garanti|edebilir|göster|misiniz|mısınız|ne kadar|kimler)\b/i.test(t) || /\s(mi|mı|mu|mü)\s*\?*$/i.test(t)) return "tr";
   if (/\b(what|which|how|our|we|show|the|should|can|who|do|is|are)\b/i.test(t)) return "en";
@@ -164,6 +165,38 @@ const DESK_INTRO: Tri = {
   tr: "**İran–Türkiye Startup Hukuk Masası** — seçilen ekipler için ilk hukuki temas noktası.\n1. Ön hukuki değerlendirme (kurucu yapısı, fikri mülkiyet, sözleşmeler, planlanan faaliyet)\n2. Türkiye'ye giriş yolları (vize / ikamet / çalışma izni — vaka bazında)\n3. Türk şirket yapısı (bağlı ortaklık / kardeş şirket / işletme şirketi / şube)\n4. Ticari başlangıç (PoC, kurumsal sözleşmeler, istihdam, fikri mülkiyet)\n5. Yatırım belgeleri (SHA, SAFE, due diligence)\nKatman 1 = Giriş & Yerleşim · Katman 2 = Yatırım & Büyüme. Yabancı danışmanlar TBB kuralları gereği Türkiye'de ruhsatlı avukatlarla çalışır.",
 };
 
+function ruleCard(key: string, lang: Lang): string {
+  const r = LEGAL_RULES.find((x) => x.key === key);
+  if (!r) return "";
+  return `**${r.title[lang]}**\n${r.summary[lang]}\n→ ${r.implication[lang]}\n${T(lang, "Source", "منبع", "Kaynak")}: ${r.source.label} (${r.source.url})`;
+}
+
+const DESK_MODELS: Tri = {
+  en: "**Commercial models for the Legal Landing Partner**\n**Model A — Referral:** platform introduces a qualified startup; the legal partner contracts directly with the startup.\n**Model B — Preferred Legal Partner:** the group is designated *Official Legal Landing Partner* of the program.\n**Model C — Startup Legal Package:** standardized package — Pre-Landing Assessment → Company / Market Entry → Commercial Setup → Ongoing Support (reference price ≈ $2,500 per team for Layer 1).\n**Model D — Corporate Legal Support:** the partner also represents Turkish corporate sponsors, investors and partnership transactions — value on both sides of the deal.\nStructure rule: a Türkiye bar-registered avukat is attorney of record; Iranian counsel coordinates (Attorneyship Law 1136).",
+  fa: "**مدل‌های تجاری همکاری با شریک حقوقی لندینگ**\n**مدل A — ارجاع:** پلتفرم استارتاپ واجد شرایط را معرفی می‌کند؛ شریک حقوقی مستقیماً با استارتاپ قرارداد می‌بندد.\n**مدل B — شریک حقوقی ترجیحی:** گروه به‌عنوان *شریک رسمی حقوقی لندینگ* برنامه معرفی می‌شود.\n**مدل C — پکیج حقوقی استارتاپ:** پکیج استاندارد — ارزیابی پیش از ورود ← ثبت شرکت / ورود به بازار ← راه‌اندازی تجاری ← پشتیبانی مستمر (قیمت مرجع ≈ ۲٬۵۰۰ دلار برای هر تیم در لایه ۱).\n**مدل D — پشتیبانی حقوقی شرکت‌ها:** شریک، اسپانسرهای شرکتی ترک، سرمایه‌گذاران و معاملات مشارکت را هم نمایندگی می‌کند — ارزش در هر دو سوی معامله.\nقاعده ساختاری: وکیل عضو کانون ترکیه وکیل پرونده است؛ مشاور ایرانی هماهنگ می‌کند (قانون وکالت ۱۱۳۶).",
+  tr: "**Hukuki Landing Ortağı için ticari modeller**\n**Model A — Yönlendirme:** platform nitelikli startup'ı tanıştırır; hukuk ortağı doğrudan startup ile sözleşme yapar.\n**Model B — Tercihli Hukuk Ortağı:** grup programın *Resmi Hukuki Landing Ortağı* olarak belirlenir.\n**Model C — Startup Hukuk Paketi:** standart paket — Ön Değerlendirme → Şirket / Pazara Giriş → Ticari Kurulum → Sürekli Destek (Katman 1 için referans fiyat ≈ ekip başına 2.500 $).\n**Model D — Kurumsal Hukuk Desteği:** ortak, Türk kurumsal sponsorları, yatırımcıları ve ortaklık işlemlerini de temsil eder — işlemin iki tarafında da değer.\nYapı kuralı: Türkiye baro kayıtlı avukat dosya avukatıdır; İranlı danışman koordine eder (Avukatlık Kanunu 1136).",
+};
+const DESK_ASK: Tri = {
+  en: "**What we ask from the legal group** (strategic partnership, not free work)\n1. Review the startup landing model\n2. Identify legally permissible pathways\n3. Define the legal services required per stage\n4. Design a standard Startup Legal Intake Form\n5. Define the Pre-Landing Legal Assessment\n6. Define company / contractual structures\n7. Establish a professional referral mechanism\n8. Act as preferred legal partner if mutually agreed\n\n**What the platform provides**\nQualified startup leads · pre-screened 3-person teams · startup profiles · corporate introductions · hotel partnerships · exhibition partnerships (Elcom, GITEX) · AI-assisted intake · international visibility · deal flow.\nThe partner focuses on legal expertise; the platform on startup acquisition + ecosystem coordination.",
+  fa: "**از گروه حقوقی چه می‌خواهیم** (همکاری راهبردی، نه کار رایگان)\n۱. بازبینی مدل لندینگ استارتاپ\n۲. شناسایی مسیرهای قانونی مجاز\n۳. تعریف خدمات حقوقی موردنیاز هر مرحله\n۴. طراحی فرم استاندارد پذیرش حقوقی استارتاپ\n۵. تعریف ارزیابی حقوقی پیش از ورود\n۶. تعریف ساختارهای شرکتی / قراردادی\n۷. ایجاد سازوکار ارجاع حرفه‌ای\n۸. ایفای نقش شریک حقوقی ترجیحی در صورت توافق\n\n**پلتفرم چه می‌دهد**\nلیدهای واجد شرایط · تیم‌های ۳ نفره غربال‌شده · پروفایل استارتاپ · معرفی به شرکت‌ها · شراکت هتل‌ها · شراکت نمایشگاه‌ها (الکامپ، GITEX) · پذیرش با کمک هوش مصنوعی · دیده‌شدن بین‌المللی · Deal Flow.\nشریک بر تخصص حقوقی تمرکز می‌کند؛ پلتفرم بر جذب استارتاپ + هماهنگی اکوسیستم.",
+  tr: "**Hukuk grubundan ne istiyoruz** (stratejik ortaklık, ücretsiz iş değil)\n1. Startup landing modelini incelemek\n2. Yasal olarak mümkün yolları belirlemek\n3. Her aşama için gerekli hukuki hizmetleri tanımlamak\n4. Standart Startup Hukuki Kabul Formu tasarlamak\n5. Ön Hukuki Değerlendirmeyi tanımlamak\n6. Şirket / sözleşme yapılarını tanımlamak\n7. Profesyonel yönlendirme mekanizması kurmak\n8. Karşılıklı anlaşılırsa tercihli hukuk ortağı olmak\n\n**Platformun sağladıkları**\nNitelikli startup lead'leri · ön elemeli 3 kişilik ekipler · startup profilleri · kurumsal tanıştırmalar · otel ortaklıkları · fuar ortaklıkları (Elcom, GITEX) · AI destekli kabul · uluslararası görünürlük · deal flow.\nOrtak hukuki uzmanlığa, platform startup kazanımı + ekosistem koordinasyonuna odaklanır.",
+};
+const DESK_METRICS: Tri = {
+  en: "**Istanbul pilot — legal partnership metrics**\nFunnel: 100+ startups → 30–50 screened → 10 selected → 10 legal assessments → 10 Türkiye landing plans → corporate matching → PoCs → investment.\nTargets: **10** teams · **30** founders · **10** legal assessments · **5+** corporate introductions · **3+** PoC opportunities · **1–3** investment / commercial deals · **1** repeatable legal landing framework.\nNo large infrastructure investment: legal framework → 10 startups → Istanbul → measure → improve → scale (Ankara, İzmir; later Central Asia, Caucasus, Middle East).",
+  fa: "**پایلوت استانبول — شاخص‌های همکاری حقوقی**\nقیف: ۱۰۰+ استارتاپ ← ۳۰–۵۰ غربال ← ۱۰ انتخاب ← ۱۰ ارزیابی حقوقی ← ۱۰ برنامه لندینگ ← تطبیق شرکتی ← PoC ← سرمایه‌گذاری.\nاهداف: **۱۰** تیم · **۳۰** مؤسس · **۱۰** ارزیابی حقوقی · **۵+** معرفی شرکتی · **۳+** فرصت PoC · **۱–۳** معامله سرمایه‌گذاری / تجاری · **۱** چارچوب حقوقی تکرارپذیر.\nبدون سرمایه‌گذاری زیرساختی بزرگ: چارچوب حقوقی ← ۱۰ استارتاپ ← استانبول ← اندازه‌گیری ← بهبود ← مقیاس (آنکارا، ازمیر؛ بعداً آسیای مرکزی، قفقاز، خاورمیانه).",
+  tr: "**İstanbul pilotu — hukuk ortaklığı metrikleri**\nHuni: 100+ startup → 30–50 elenen → 10 seçilen → 10 hukuki değerlendirme → 10 Türkiye landing planı → kurumsal eşleştirme → PoC'ler → yatırım.\nHedefler: **10** ekip · **30** kurucu · **10** hukuki değerlendirme · **5+** kurumsal tanıştırma · **3+** PoC fırsatı · **1–3** yatırım / ticari anlaşma · **1** tekrarlanabilir hukuki landing çerçevesi.\nBüyük altyapı yatırımı yok: hukuki çerçeve → 10 startup → İstanbul → ölç → iyileştir → ölçekle (Ankara, İzmir; sonra Orta Asya, Kafkasya, Orta Doğu).",
+};
+const DESK_MEETING: Tri = {
+  en: "**Three questions for the first meeting with the legal group**\n1. Is this legal landing model workable under Turkish law?\n2. What should the legal pathway look like for a typical three-person startup (entry → entity → PoC contract → investment)?\n3. Can your group become the strategic legal partner for the first Istanbul pilot?\n\nPositioning: don't say \"we bring Iranian startups to Türkiye\"; say \"we want to build a **Türkiye Startup Legal Landing Desk** with you as the legal entry point for Iranian startups\". Invite them as the first *legal product design partner*, not just the program's lawyer.",
+  fa: "**سه سؤال جلسه اول با گروه حقوقی**\n۱. آیا این مدل لندینگ حقوقی طبق قوانین ترکیه قابل اجراست؟\n۲. مسیر حقوقی یک استارتاپ معمولی سه‌نفره چگونه باید باشد (ورود ← شرکت ← قرارداد PoC ← سرمایه‌گذاری)؟\n۳. آیا گروه شما می‌تواند شریک راهبردی حقوقی اولین پایلوت استانبول باشد؟\n\nجایگاه‌یابی: نگویید «استارتاپ‌های ایرانی را به ترکیه می‌آوریم»؛ بگویید «می‌خواهیم با شما یک **میز حقوقی لندینگ استارتاپی ترکیه** بسازیم که نقطه ورود حقوقی استارتاپ‌های ایرانی باشد». آنها را به‌عنوان اولین *شریک طراحی محصول حقوقی* دعوت کنید، نه صرفاً وکیل برنامه.",
+  tr: "**Hukuk grubuyla ilk toplantı için üç soru**\n1. Bu hukuki landing modeli Türk hukukuna göre uygulanabilir mi?\n2. Tipik üç kişilik bir startup için hukuki yol nasıl olmalı (giriş → şirket → PoC sözleşmesi → yatırım)?\n3. Grubunuz ilk İstanbul pilotunun stratejik hukuk ortağı olabilir mi?\n\nKonumlandırma: \"İranlı startup'ları Türkiye'ye getiriyoruz\" demeyin; \"sizinle İranlı startup'ların hukuki giriş noktası olacak bir **Türkiye Startup Hukuki Landing Masası** kurmak istiyoruz\" deyin. Onları sadece programın avukatı olarak değil, ilk *hukuki ürün tasarım ortağı* olarak davet edin.",
+};
+const DESK_SAFETY: Tri = {
+  en: "**Legal AI Safety Principle**\nThe platform explicitly separates **AI information** from **professional legal advice**.\nAI may say: \"These are the documents / questions that may need review.\"\nOnly the licensed lawyer says: \"This is the legally appropriate route for this client.\"\nAI prepares, organizes and routes information; it never replaces the lawyer. Every AI legal answer carries a disclaimer, and no residence / work permit / kimlik outcome is ever promised. This protects the professional role of the legal partner.",
+  fa: "**اصل ایمنی هوش مصنوعی حقوقی**\nپلتفرم صریحاً **اطلاعات هوش مصنوعی** را از **مشاوره حقوقی حرفه‌ای** جدا می‌کند.\nهوش مصنوعی می‌تواند بگوید: «این‌ها مدارک / سؤالاتی هستند که ممکن است نیاز به بررسی داشته باشند.»\nفقط وکیل دارای پروانه می‌گوید: «این مسیر حقوقی مناسب برای این موکل است.»\nهوش مصنوعی اطلاعات را آماده، سازمان‌دهی و مسیریابی می‌کند؛ هرگز جای وکیل را نمی‌گیرد. هر پاسخ حقوقی هوش مصنوعی سلب مسئولیت دارد و هیچ نتیجه اقامت / اجازه کار / کیملیک وعده داده نمی‌شود. این نقش حرفه‌ای شریک حقوقی را حفظ می‌کند.",
+  tr: "**Hukuki AI Güvenlik İlkesi**\nPlatform **AI bilgisini** **profesyonel hukuki tavsiyeden** açıkça ayırır.\nAI şunu diyebilir: \"İncelenmesi gerekebilecek belgeler / sorular şunlardır.\"\nYalnızca lisanslı avukat der ki: \"Bu müvekkil için hukuken uygun yol budur.\"\nAI bilgiyi hazırlar, düzenler ve yönlendirir; avukatın yerini asla almaz. Her hukuki AI yanıtı sorumluluk reddi taşır ve hiçbir ikamet / çalışma izni / kimlik sonucu vaat edilmez. Bu, hukuk ortağının profesyonel rolünü korur.",
+};
+
 export async function runAgent(agent: AgentKey, question: string, startupId?: number | null, locale: Lang = "en"): Promise<string> {
   const s = await loadStartup(startupId);
   const lang = detectLang(question, locale);
@@ -173,6 +206,11 @@ export async function runAgent(agent: AgentKey, question: string, startupId?: nu
 
   switch (agent) {
     case "desk": {
+      if (has(/model|referral|preferred|package|commercial|مدل|ارجاع|پکیج|تجاری|ticari|yönlendirme|paket|A[–-]D|A تا D/i)) return DESK_MODELS[lang] + DISCLAIMER[lang];
+      if (has(/ask|provide|offer|expect|چه می‌خواهیم|چه می‌دهیم|می‌خواهیم|ne istiyoruz|ne sağlıyoruz|sağl/i)) return DESK_ASK[lang] + DISCLAIMER[lang];
+      if (has(/metric|kpi|pilot|funnel|success|شاخص|پایلوت|قیف|metrik|huni|başarı/i)) return DESK_METRICS[lang] + DISCLAIMER[lang];
+      if (has(/meeting|questions?|pitch|position|جلسه|سؤال|toplantı|soru|konumland/i)) return DESK_MEETING[lang] + DISCLAIMER[lang];
+      if (has(/safety|principle|ai .*advice|advice|ایمنی|اصل|مشاوره حقوقی|güvenlik|ilke|tavsiye/i)) return DESK_SAFETY[lang] + DISCLAIMER[lang];
       if (has(/bootcamp|بوت|kamp|workshop|کارگاه|eğitim/i)) {
         const camps = await db.select().from(bootcamps).orderBy(bootcamps.startDate);
         const head = T(lang, "**Upcoming legal bootcamps**", "**بوت‌کمپ‌های حقوقی پیش‌رو**", "**Yaklaşan hukuk bootcampleri**");
@@ -211,6 +249,29 @@ export async function runAgent(agent: AgentKey, question: string, startupId?: nu
     }
 
     case "legal": {
+      if (has(/visa[- ]?free|exemption|90|۹۰|بدون ویزا|معافیت|vizesiz|muafiyet|how long|چند روز|ne kadar kal/i)) {
+        return ruleCard("visa_exemption", lang) + DISCLAIMER[lang];
+      }
+      if (has(/tech ?visa|تک ویزا|ویزای فناوری/i)) {
+        return ruleCard("tech_visa", lang) + DISCLAIMER[lang];
+      }
+      if (has(/work permit|اجازه کار|çalışma izni|500|۵۰۰|employees|کارمند|çalışan/i)) {
+        return ruleCard("work_permit_shareholder", lang) + DISCLAIMER[lang];
+      }
+      if (has(/capital|سرمایه|sermaye|50,?000|۵۰|ltd|a\.ş|mersis|register|ثبت شرکت|kuruluş/i) && !has(/subsidiary|sister|زیرمجموعه|kardeş/i)) {
+        return ruleCard("company_formation", lang) + DISCLAIMER[lang];
+      }
+      if (has(/foreign lawyer|iranian lawyer|bar|وکیل ایرانی|وکیل خارجی|کانون|yabancı avukat|baro|1136/i)) {
+        return ruleCard("foreign_lawyers", lang) + DISCLAIMER[lang];
+      }
+      if (has(/route|pathway|which (visa|permit)|مسیر|کدام (ویزا|اقامت)|hangi (vize|izin)|yol/i)) {
+        const rec = recommendPathway({ days: 14, willWork: false, hasEntity: false, capitalTl: 0, techFounder: true, hasCorporateLoi: false }, lang);
+        const rec2 = recommendPathway({ days: 365, willWork: true, hasEntity: true, capitalTl: 50000, techFounder: true, hasCorporateLoi: true }, lang);
+        return T(lang,
+          `**Typical route for a 3-person team**\nPhase 1 (14 days): ${rec.route}\n${rec.steps.map((x) => "• " + x).join("\n")}\n\nPhase 2 (after PoC + entity): ${rec2.route}\n${rec2.steps.map((x) => "• " + x).join("\n")}\n\nRun the interactive advisor at /legal/rules for a specific founder.`,
+          `**مسیر معمول برای تیم ۳ نفره**\nفاز ۱ (۱۴ روز): ${rec.route}\n${rec.steps.map((x) => "• " + x).join("\n")}\n\nفاز ۲ (پس از PoC + شرکت): ${rec2.route}\n${rec2.steps.map((x) => "• " + x).join("\n")}\n\nبرای یک مؤسس مشخص، مشاور تعاملی را در /legal/rules اجرا کنید.`,
+          `**3 kişilik ekip için tipik yol**\nFaz 1 (14 gün): ${rec.route}\n${rec.steps.map((x) => "• " + x).join("\n")}\n\nFaz 2 (PoC + şirket sonrası): ${rec2.route}\n${rec2.steps.map((x) => "• " + x).join("\n")}\n\nBelirli bir kurucu için /legal/rules adresindeki etkileşimli danışmanı çalıştırın.`) + DISCLAIMER[lang];
+      }
       if (has(/kimlik|کیملیک|guarantee|تضمین|garanti|residence|اقامت|ikamet|citizen|شهروند|vatandaş/i)) {
         return T(lang,
           "**No.** Sponsors and the platform do **not** guarantee a kimlik, residence permit, work authorization or citizenship. Company registration by itself does not grant these. What we do: connect you with Legal Team 1 (Entry & Settlement) who evaluates lawful pathways — business visa, Türkiye Tech Visa eligibility, short-term residence, or a work permit sponsored by a Turkish entity — case by case. This is professional support, not a promise.",

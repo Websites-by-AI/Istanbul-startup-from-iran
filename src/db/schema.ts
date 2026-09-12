@@ -132,6 +132,63 @@ export const legalAssessments = pgTable("legal_assessments", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const supportRequests = pgTable("support_requests", {
+  id: serial("id").primaryKey(),
+  startupId: integer("startup_id").references(() => startups.id),
+  teamName: text("team_name").notNull(),
+  contact: text("contact").notNull().default(""),
+  needs: text("needs").array().notNull().default([]), // accommodation | travel | legal | documents | poc | office | mentoring | media | investment
+  companions: integer("companions").notNull().default(3),
+  fromDate: text("from_date").notNull().default(""),
+  days: integer("days").notNull().default(14),
+  city: text("city").notNull().default("Istanbul"),
+  budgetUsd: integer("budget_usd").notNull().default(0),
+  message: text("message").notNull().default(""),
+  status: text("status").notNull().default("open"), // open | partially | matched | closed
+  source: text("source").notNull().default("web"), // web | telegram
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const pledges = pgTable("pledges", {
+  id: serial("id").primaryKey(),
+  requestId: integer("request_id").references(() => supportRequests.id).notNull(),
+  sponsorType: text("sponsor_type").notNull(), // hotel | corporate | foreign | legal | ecosystem
+  sponsorName: text("sponsor_name").notNull(),
+  country: text("country").notNull().default("Türkiye"),
+  contact: text("contact").notNull().default(""),
+  covers: text("covers").array().notNull().default([]),
+  amountUsd: integer("amount_usd").notNull().default(0),
+  inKind: text("in_kind").notNull().default(""),
+  note: text("note").notNull().default(""),
+  status: text("status").notNull().default("offered"), // offered | accepted
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const channelPosts = pgTable("channel_posts", {
+  id: serial("id").primaryKey(),
+  kind: text("kind").notNull(), // request | pledge | landing | bootcamp | rule
+  lang: text("lang").notNull().default("fa"),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  refId: integer("ref_id"),
+  status: text("status").notNull().default("draft"), // draft | published
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const telegramUsers = pgTable("telegram_users", {
+  id: serial("id").primaryKey(),
+  chatId: text("chat_id").notNull().unique(),
+  username: text("username").notNull().default(""),
+  lang: text("lang").notNull().default("fa"),
+  agent: text("agent").notNull().default("legal"),
+  startupId: integer("startup_id").references(() => startups.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type SupportRequest = typeof supportRequests.$inferSelect;
+export type Pledge = typeof pledges.$inferSelect;
+export type ChannelPost = typeof channelPosts.$inferSelect;
 export type Bootcamp = typeof bootcamps.$inferSelect;
 export type LegalAssessment = typeof legalAssessments.$inferSelect;
 export type Hotel = typeof hotels.$inferSelect;

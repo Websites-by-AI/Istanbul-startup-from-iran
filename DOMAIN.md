@@ -10,7 +10,7 @@ https://websites-by-ai.github.io/Istanbul-startup-from-iran/ (GitHub Pages mirro
 | --- | --- |
 | Pages project `istanbul-startup-from-iran` | ✅ deployed, production branch `main` |
 | Custom domain added to the project | ✅ `startup.exhibition2world.ir` (status `pending`) |
-| CNAME record in the `exhibition2world.ir` zone | ❌ **missing — needs DNS:Edit** |
+| CNAME record in the `exhibition2world.ir` zone | ⏸️ **deferred by decision (2026-09-12)** — needs DNS:Edit |
 | TLS certificate (Google CA) | ⏳ issued automatically once the CNAME exists |
 
 Cloudflare reports exactly this: `"CNAME record not set"`.
@@ -24,6 +24,12 @@ Both API tokens provided so far were tested and **neither can write DNS**:
 
 So the record has to be added by you (option A below) or by a token that has `Zone · DNS · Edit`
 (option B). Nothing else is blocking the domain — both live hosts already work without it.
+
+## Status: deferred
+
+Both live hosts work without the custom domain, so this was put on hold. To resume at any time,
+run `./domain-check.sh` (it reports the record + certificate status and creates the record if the
+token is allowed to) and follow option A or B below.
 
 ## Finish it — option A (30 seconds, in the dashboard)
 

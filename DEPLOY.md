@@ -6,7 +6,7 @@
 |---|---|---|
 | **Cloudflare Pages** (primary) | https://istanbul-startup-from-iran.pages.dev | site + edge JSON API + Telegram/Discord/WhatsApp webhooks |
 | **GitHub Pages** (static mirror) | https://websites-by-ai.github.io/Istanbul-startup-from-iran/ | the same site from branch `gh-pages`; API/chat calls go cross-origin to the Cloudflare origin |
-| GitHub repo | https://github.com/Websites-by-AI/Istanbul-startup-from-iran | `main` = source (default branch), `gh-pages` = built mirror, `master` = the older Next.js draft, untouched |
+| GitHub repo | https://github.com/Websites-by-AI/Istanbul-startup-from-iran | `main` = source (default branch), `gh-pages` = built mirror, `archive/nextjs-draft` = the older Next.js draft (kept for reference, not deployed) |
 
 Custom domain `startup.exhibition2world.ir` is registered on the Pages project and waiting on one DNS
 record — see [DOMAIN.md](DOMAIN.md) and `./domain-check.sh`.

@@ -43,7 +43,7 @@ python -m bot.cli                 # scripted end-to-end demo
 python -m bot.cli --repl          # interactive chat with the core
 
 # 3) tests
-pytest -q                         # 150 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API
+pytest -q                         # 155 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API
 ```
 
 ## Connecting the three bots
@@ -121,6 +121,11 @@ Layer 2 — Investment & Growth Legal (after landing) steps 5–6
 
 ---
 
+## Push / deploy
+
+The git repo is initialised with `origin` → `github.com/Websites-by-AI/Istanbul-startup-from-iran`.
+See [`PUSH.md`](PUSH.md) for the exact push commands and the per-channel deployment table.
+
 ## Repository
 
 ```
@@ -128,7 +133,7 @@ bot/            core, safety, legal_desk, navigator, sponsors, deck, server, run
 bot/channels/   base, simulated, telegram, discord, whatsapp
 web/index.html  website + chat widget (single file, no external assets)
 data/hotels.json  seed: hotels, corporate sponsors, ecosystem sponsors, legal partners
-tests/          150 tests incl. real HTTP server end-to-end
+tests/          155 tests incl. real HTTP server end-to-end
 ```
 
 ## Notes & boundaries

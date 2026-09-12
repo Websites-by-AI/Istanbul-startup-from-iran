@@ -71,19 +71,30 @@ def main() -> None:
     if cfg.whatsapp.enabled:
         log.info("  WhatsApp webhook: POST /webhook/whatsapp (verify token: %s)", cfg.whatsapp.verify_token)
 
+    # serve_forever runs in its own thread so signal handlers can shut it down
+    # without deadlocking (httpd.shutdown() must not be called from serve_forever).
+    http_thread = threading.Thread(target=httpd.serve_forever, daemon=True, name="http")
+    http_thread.start()
     stop = threading.Event()
 
     def _shutdown(*_: object) -> None:
+        if stop.is_set():
+            return
         log.info("shutting down…")
         stop.set()
-        httpd.shutdown()
 
     signal.signal(signal.SIGINT, _shutdown)
     signal.signal(signal.SIGTERM, _shutdown)
     try:
-        httpd.serve_forever()
+        while not stop.wait(0.5):
+            pass
     except KeyboardInterrupt:
         _shutdown()
+    finally:
+        httpd.shutdown()
+        httpd.server_close()
+        http_thread.join(timeout=5)
+        log.info("stopped.")
 
 
 if __name__ == "__main__":

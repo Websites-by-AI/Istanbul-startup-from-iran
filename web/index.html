@@ -336,13 +336,13 @@ summary{cursor:pointer;font-weight:700;font-size:14.5px}
             <button class="btn" type="button" id="deckPdf" data-i18n="deck_pdf">⬇ PDF</button>
             <button class="btn soft" type="button" id="deckHtml" data-i18n="deck_html">🌐 HTML</button>
             <button class="btn soft" type="button" id="deckMd" data-i18n="deck_md">📝 Markdown</button>
-            <a class="btn ghost" style="border-color:var(--line);color:var(--ink)" href="/deck" target="_blank" data-i18n="deck_open">Open printable page</a>
+            <a class="btn ghost" style="border-color:var(--line);color:var(--ink)" href="deck.html" target="_blank" data-i18n="deck_open">Open printable page</a>
           </div>
         </form>
       </div>
       <div class="card">
         <h3 data-i18n="deck_preview">Preview</h3>
-        <iframe id="deckFrame" src="/deck" title="deck preview"></iframe>
+        <iframe id="deckFrame" src="deck.html" title="deck preview"></iframe>
       </div>
     </div>
     <pre class="out" id="deckOut" style="display:none"></pre>
@@ -557,14 +557,24 @@ function applyLang(){
 }
 document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;localStorage.setItem("lang",LANG);applyLang();});
 
-const api = (path, opts) => fetch(path, opts).then(r=>{ if(!r.ok) throw new Error(r.status+" "+path); return r; });
+/* Runtime base paths.
+   Cloudflare Pages build: both empty → everything is same-origin.
+   GitHub Pages mirror: build_static.py --api-base injects the Cloudflare origin
+   (CORS is open on /api and /webhook) and --base-path the repo sub-directory,
+   so the static JSON/deck files resolve under /Istanbul-startup-from-iran/. */
+const API_BASE  = (window.API_BASE  || "").replace(/\/+$/, "");
+const BASE_PATH = (window.BASE_PATH || "").replace(/\/+$/, "");
+const u   = p => (p.startsWith("http") ? p : API_BASE + p);   // backend calls
+const loc = p => (p.startsWith("http") ? p : BASE_PATH + p);  // local assets
+
+const api = (path, opts) => fetch(u(path), opts).then(r=>{ if(!r.ok) throw new Error(r.status+" "+path); return r; });
 const japi = (path, body) => api(path, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body||{})}).then(r=>r.json());
 
 /* ---------------- boot data ---------------- */
 let DATA = {};
 async function resilient(apiPath, staticPath){
   try{ return await japi(apiPath); }
-  catch(e){ const r = await fetch(staticPath); if(!r.ok) throw e; return r.json(); }
+  catch(e){ const r = await fetch(loc(staticPath)); if(!r.ok) throw e; return r.json(); }
 }
 async function boot(){
   const [info, journey, hotels] = await Promise.all([
@@ -910,7 +920,7 @@ const CHECKS = [
       if(r.assessment.band!=="ready") throw new Error("expected ready, got "+r.assessment.band);
       if(!r.hotel_matches || !r.hotel_matches.length) throw new Error("no hotel match");
       return "case="+r.case_id+" · score="+r.assessment.score+" · band=ready · hotel="+r.hotel_matches[0].hotel.name.slice(0,18); }},
-  {name:"Intake validation returns 422", run: async()=>{ const res=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intake:{startup_name:"x"}})});
+  {name:"Intake validation returns 422", run: async()=>{ const res=await fetch(u("/api/intake"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intake:{startup_name:"x"}})});
       if(res.status!==422) throw new Error("expected 422, got "+res.status);
       const r=await res.json(); return "422 · missing="+r.missing.length+" fields"; }},
   {name:"Weak startup is not scored 'ready'", run: async()=>{ const r=await japi("/api/assessment",{intake:{startup_name:"Weak",sector:"AI",stage:"idea",team_size:9,
@@ -935,7 +945,7 @@ const CHECKS = [
       return a.funnel[2].projected+" → "+b.funnel[2].projected+" selected"; }},
   {name:"Telegram webhook processes an update", run: async()=>{
       const update={update_id:1,message:{message_id:11,date:1,text:"/journey",from:{id:42,first_name:"Test"},chat:{id:42,type:"private"}}};
-      const r=await fetch("/webhook/telegram",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(update)});
+      const r=await fetch(u("/webhook/telegram"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(update)});
       if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
       const d=await r.json();
       if(!d.reply || !/STEP 1/.test(d.reply.text)) throw new Error("journey not returned");
@@ -943,16 +953,16 @@ const CHECKS = [
   {name:"WhatsApp webhook + verification handshake", run: async()=>{
       const payload={entry:[{changes:[{value:{contacts:[{wa_id:"905551234567",profile:{name:"Test User"}}],
         messages:[{from:"905551234567",id:"wamid.TEST",type:"text",text:{body:"/hotels"}}]}}]}]};
-      const r=await fetch("/webhook/whatsapp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      const r=await fetch(u("/webhook/whatsapp"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
       if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
       const d=await r.json();
       if(!d.processed || !d.processed.length) throw new Error("nothing processed");
-      const v=await fetch("/webhook/whatsapp?hub.mode=subscribe&hub.verify_token=startup-landing&hub.challenge=ping123");
+      const v=await fetch(u("/webhook/whatsapp?hub.mode=subscribe&hub.verify_token=startup-landing&hub.challenge=ping123"));
       const challenge = v.ok ? (await v.text()) : "(403)";
       return "processed="+d.processed.length+" · route="+(d.processed[0].reply||{}).route+" · verify="+challenge; }},
   {name:"Discord webhook processes a message", run: async()=>{
       const payload={t:"MESSAGE_CREATE",d:{id:"m1",channel_id:"c1",content:"/deck",author:{id:"u1",username:"e2e",bot:false}}};
-      const r=await fetch("/webhook/discord",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      const r=await fetch(u("/webhook/discord"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
       if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
       const d=await r.json();
       if(!d.reply || d.reply.route!=="deck") throw new Error("unexpected route "+(d.reply||{}).route);

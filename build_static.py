@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Build the Cloudflare Pages bundle.
+"""Build the deployable static bundle.
 
-    python3 build_static.py            # writes public/ + functions/_core/data.js
+    python3 build_static.py                       # Cloudflare Pages → public/
+    python3 build_static.py --target gh-pages     # GitHub Pages mirror → public-gh/
+
+GitHub Pages serves the repo from a sub-directory and has no backend, so that
+build injects window.API_BASE (the Cloudflare Pages origin — CORS is open on
+/api and /webhook) and window.BASE_PATH (the repo prefix used for local assets).
 
 Outputs
 -------
@@ -17,7 +22,9 @@ functions/_core/data.js       the seed data inlined for the JS core
 
 from __future__ import annotations
 
+import argparse
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -30,11 +37,34 @@ from bot import legal_desk, sponsors        # noqa: E402
 from bot.channels import describe_adapters  # noqa: E402
 from bot.config import load_config          # noqa: E402
 
-PUBLIC = ROOT / "public"
 CORE = ROOT / "functions" / "_core"
+PAGES_ORIGIN = "https://istanbul-startup-from-iran.pages.dev"
+GH_BASE_PATH = "/Istanbul-startup-from-iran"
 
 
-def main() -> int:
+def parse_args(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--target", choices=("pages", "gh-pages"), default="pages",
+                    help="pages = Cloudflare Pages bundle (default), gh-pages = GitHub Pages mirror")
+    ap.add_argument("--out", default=None, help="output directory (default public/ or public-gh/)")
+    ap.add_argument("--api-base", default=None,
+                    help=f"backend origin for API/webhook calls (gh-pages default {PAGES_ORIGIN})")
+    ap.add_argument("--base-path", default=None,
+                    help=f"url prefix for local assets (gh-pages default {GH_BASE_PATH})")
+    a = ap.parse_args(argv)
+    if a.target == "gh-pages":
+        a.api_base = a.api_base if a.api_base is not None else PAGES_ORIGIN
+        a.base_path = a.base_path if a.base_path is not None else GH_BASE_PATH
+    else:
+        a.api_base = a.api_base or ""
+        a.base_path = a.base_path or ""
+    a.out = Path(a.out) if a.out else ROOT / ("public-gh" if a.target == "gh-pages" else "public")
+    return a
+
+
+def main(argv=None) -> int:
+    args = parse_args(argv)
+    PUBLIC = args.out
     if PUBLIC.exists():
         shutil.rmtree(PUBLIC)
     (PUBLIC / "static").mkdir(parents=True, exist_ok=True)
@@ -51,7 +81,16 @@ def main() -> int:
     )
 
     # ---- static site ----------------------------------------------------
-    shutil.copy(ROOT / "web" / "index.html", PUBLIC / "index.html")
+    html = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
+    if args.api_base or args.base_path:
+        cfg = ('<script>window.API_BASE=%s;window.BASE_PATH=%s;</script>'
+               % (json.dumps(args.api_base), json.dumps(args.base_path)))
+        html = html.replace("<script>", cfg + "\n<script>", 1)
+        html = html.replace("https://YOUR-DOMAIN", args.api_base or "https://YOUR-DOMAIN")
+    (PUBLIC / "index.html").write_text(html, encoding="utf-8")
+    if args.target == "gh-pages":
+        (PUBLIC / ".nojekyll").write_text("", encoding="utf-8")
+        (PUBLIC / "404.html").write_text(html, encoding="utf-8")
 
     opts = deck_mod.DeckOptions()
     (PUBLIC / "deck.html").write_text(deck_mod.deck_html(opts), encoding="utf-8")
@@ -132,14 +171,17 @@ def main() -> int:
         ),
         encoding="utf-8",
     )
-    (PUBLIC / "_headers").write_text(
-        "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n"
-        "  Permissions-Policy: geolocation=(), camera=(), microphone=()\n",
-        encoding="utf-8",
-    )
+    if args.target == "pages":
+        (PUBLIC / "_headers").write_text(
+            "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n"
+            "  Permissions-Policy: geolocation=(), camera=(), microphone=()\n",
+            encoding="utf-8",
+        )
 
     files = sorted(str(p.relative_to(PUBLIC)) for p in PUBLIC.rglob("*") if p.is_file())
-    print(f"built {len(files)} files into {PUBLIC.relative_to(ROOT)}/")
+    where = PUBLIC.relative_to(ROOT) if PUBLIC.is_relative_to(ROOT) else PUBLIC
+    print(f"built {len(files)} files into {where}/  (target={args.target}"
+          + (f", api_base={args.api_base}, base_path={args.base_path}" if args.api_base or args.base_path else "") + ")")
     for f in files:
         size = (PUBLIC / f).stat().st_size
         print(f"  {f:<28}{size:>9,} bytes")

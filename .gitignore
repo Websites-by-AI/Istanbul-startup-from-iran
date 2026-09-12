@@ -29,3 +29,4 @@ public/
 .dev.vars
 .npm/
 package-lock.json
+public-gh/

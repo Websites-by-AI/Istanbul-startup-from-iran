@@ -3,6 +3,7 @@
 #
 #   export CLOUDFLARE_API_TOKEN="..."     # needs Pages:Edit
 #   export CLOUDFLARE_ACCOUNT_ID="5b456a2b43bb367410c50b35b9e7f71f"
+#   export GH_TOKEN="..."           # optional → also publishes the GitHub Pages mirror
 #   ./deploy.sh
 #
 # The token is read from the environment only — it is never written to a file.
@@ -31,5 +32,14 @@ echo "→ deploying to Cloudflare Pages ($PROJECT / $BRANCH)"
 if [ -x node_modules/.bin/wrangler ]; then WRANGLER=node_modules/.bin/wrangler; else WRANGLER="npx --yes wrangler"; fi
 $WRANGLER pages deploy public --project-name "$PROJECT" --branch "$BRANCH" --commit-dirty=true
 
+echo "✔ Cloudflare Pages → https://${PROJECT}.pages.dev"
+
+if [ -n "${GH_TOKEN:-}" ] && [ "${PUBLISH_GH_PAGES:-1}" = "1" ]; then
+  echo "→ publishing the GitHub Pages mirror (gh-pages)"
+  ./publish_gh_pages.sh
+else
+  echo "· GitHub Pages mirror skipped (set GH_TOKEN to publish it too)"
+fi
+
 echo
-echo "✔ done → https://${PROJECT}.pages.dev"
+echo "✔ done"

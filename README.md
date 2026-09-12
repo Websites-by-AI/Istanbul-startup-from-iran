@@ -1,7 +1,10 @@
 # Iran → Türkiye · Startup Landing Platform
 
-**Live: https://istanbul-startup-from-iran.pages.dev** (Cloudflare Pages — site, JSON API, chat
-widget and the Telegram/Discord/WhatsApp webhooks). Deployment details in [`DEPLOY.md`](DEPLOY.md).
+**Live (full runtime): https://istanbul-startup-from-iran.pages.dev** — Cloudflare Pages: site, edge
+JSON API, chat widget and the Telegram/Discord/WhatsApp webhooks.
+**Live (static mirror): https://websites-by-ai.github.io/Istanbul-startup-from-iran/** — GitHub Pages:
+the same site; its API/chat calls go cross-origin to the Cloudflare origin (CORS is open), so the
+navigator works there too. Deployment details in [`DEPLOY.md`](DEPLOY.md).
 
 **Custom domain:** `startup.exhibition2world.ir` is registered on the Pages project; it goes live as
 soon as one CNAME is added to the zone — see [DOMAIN.md](DOMAIN.md) (`./domain-check.sh` reports the
@@ -39,6 +42,10 @@ pipeline and can continue on another channel.
 
 ```bash
 ./deploy.sh                            # build + test + deploy to Cloudflare Pages (needs CLOUDFLARE_API_TOKEN)
+                                       # + publishes the GitHub Pages mirror when GH_TOKEN is set
+python3 build_static.py --target gh-pages   # only rebuild the mirror bundle into public-gh/
+node scripts/production_check.mjs      # 27 live checks against both hosts
+RUN_LIVE=1 python3 -m pytest tests/test_live_production.py -q
 pip install -r requirements.txt
 
 # 1) website + API + chat widget (all channels reachable via webhooks)
@@ -142,13 +149,16 @@ bot/channels/     base, simulated, telegram, discord, whatsapp
 functions/        Cloudflare Pages backend — JS port of the same core (api + webhook routes)
 functions/_core/  core.js, legal_desk.js, navigator.js, safety.js, sponsors.js, deck.js, data.js
 web/index.html    website + chat widget (single file, no external assets)
-scripts/          parity_check.mjs — runs the JS core against the same expectations as pytest
+scripts/          parity_check.mjs (JS core vs pytest expectations) + production_check.mjs (live hosts)
 build_static.py   builds public/ (static site + deck files + JSON fallbacks) and functions/_core/data.js
 deploy.sh         build → test → parity → deploy to Cloudflare Pages
 domain-check.sh   custom-domain status + the exact DNS record still needed
+publish_gh_pages.sh  build public-gh/ and push it to the gh-pages branch (GitHub Pages mirror)
 data/hotels.json  seed: hotels, corporate sponsors, ecosystem sponsors, legal partners
-tests/            169 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity
-public/           build artifact (gitignored)
+tests/            171 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity,
+                  plus opt-in live production checks (RUN_LIVE=1)
+public/           Cloudflare Pages build artifact (gitignored)
+public-gh/        GitHub Pages mirror build artifact (gitignored)
 DEPLOY.md         how it is deployed, secrets, webhook wiring, redeploy
 DOMAIN.md         custom domain startup.exhibition2world.ir — one CNAME away from live
 ```

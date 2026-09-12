@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+.card {
+  @apply rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_10px_40px_rgba(0,0,0,0.35)];
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
+
+.input {
+  @apply w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-amber-400;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+
+.font-fa { font-family: var(--font-vazir), Tahoma, sans-serif; }
+[dir="rtl"] .font-mono, [dir="rtl"] input[type="number"], [dir="rtl"] input[type="email"], [dir="rtl"] input[type="date"] { direction: ltr; unicode-bidi: isolate; }
+[dir="rtl"] .text-end { text-align: left; }
+[dir="rtl"] .text-start { text-align: right; }

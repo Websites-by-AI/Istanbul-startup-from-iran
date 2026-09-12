@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Iran → Türkiye · Startup Landing Platform</title>
+<style>
+:root{
+  --ink:#0d1b2a; --ink2:#15293d; --accent:#c8102e; --gold:#e0a458; --teal:#0f8b8d;
+  --muted:#63748a; --line:#e3e8ee; --bg:#f5f7fa; --card:#ffffff; --ok:#127a4b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Arabic",sans-serif;
+  color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+body.rtl{direction:rtl}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{position:sticky;top:0;z-index:50;background:rgba(13,27,42,.96);color:#fff;backdrop-filter:blur(6px)}
+.top-in{display:flex;align-items:center;gap:14px;padding:12px 20px;max-width:1180px;margin:0 auto;flex-wrap:wrap}
+.logo{font-weight:800;letter-spacing:-.4px;font-size:16px;display:flex;align-items:center;gap:8px}
+.logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(200,16,46,.25)}
+nav.links{display:flex;gap:4px;margin-inline-start:auto;flex-wrap:wrap}
+nav.links a{color:#cdd8e3;font-size:13.5px;padding:6px 10px;border-radius:8px}
+nav.links a:hover{background:rgba(255,255,255,.08);color:#fff}
+.langs{display:flex;gap:4px}
+.langs button{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.langs button.on{background:var(--accent);border-color:var(--accent)}
+.hero{background:linear-gradient(135deg,#0d1b2a 0%,#1b3a5c 55%,#2b1b2e 100%);color:#fff;padding:56px 0 48px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:auto -60px -120px auto;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(224,164,88,.28),transparent 65%)}
+.hero h1{font-size:clamp(28px,4.4vw,46px);line-height:1.15;margin:0 0 12px;letter-spacing:-1px}
+.hero p.lead{font-size:17px;color:#d5dee7;max-width:760px;margin:0 0 20px}
+.pill{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
+  color:#fff;border-radius:999px;padding:5px 13px;font-size:12.5px;margin:0 6px 6px 0}
+.btn{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:12px 20px;
+  font-size:15px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff}
+.btn.soft{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.5;cursor:progress}
+section{padding:44px 0}
+section.alt{background:var(--card);border-block:1px solid var(--line)}
+h2.sec{font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.5px}
+.kicker{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:1.6px;text-transform:uppercase;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 26px;max-width:820px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0 0 8px;color:var(--muted);font-size:14.5px}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{background:#eef2f6;border:1px solid #dde4ea;border-radius:999px;padding:3px 10px;font-size:12px;color:#33475b}
+.badge{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;background:#fdecef;color:var(--accent)}
+.badge.gold{background:#fdf4e6;color:#8a5a12}
+.badge.teal{background:#e6f5f5;color:#0b6a6c}
+.steps{counter-reset:s;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative}
+.step:before{counter-increment:s;content:counter(s);position:absolute;top:-14px;inset-inline-start:16px;
+  width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.step h4{margin:8px 0 6px;font-size:15.5px}
+.step ul{margin:6px 0 0;padding-inline-start:18px;color:var(--muted);font-size:13.5px}
+.step .owner{font-size:12px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.warn{border-inline-start:4px solid var(--gold);background:#fffaf2;padding:12px 16px;border-radius:10px;font-size:14px;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border-radius:10px;overflow:hidden}
+th{background:var(--ink);color:#fff;text-align:start;padding:10px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:9px 10px}
+tr:nth-child(even) td{background:#fafbfc}
+.mapwrap{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+@media(max-width:880px){.mapwrap{grid-template-columns:1fr}}
+.mapbox{background:#0d1b2a;border-radius:14px;padding:10px;position:relative}
+svg{display:block;width:100%;height:auto;border-radius:10px}
+.pin{cursor:pointer}
+.pin circle{transition:r .15s}
+.pin:hover circle{r:12}
+.hotelitem{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:10px;cursor:pointer}
+.hotelitem:hover{border-color:var(--accent)}
+.hotelitem.on{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,16,46,.12)}
+.hotelitem b{font-size:14.5px}
+.muted{color:var(--muted);font-size:13px}
+form.intake{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+label.f{display:block;font-size:12.5px;font-weight:700;color:#33475b;margin-bottom:4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid #d5dce4;border-radius:10px;font-size:14px;
+  font-family:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(200,16,46,.25);border-color:var(--accent)}
+.span2{grid-column:1/-1}
+pre.out{background:#0d1b2a;color:#d6e4f0;padding:16px;border-radius:12px;overflow:auto;font-size:12.5px;max-height:420px}
+.score{display:flex;align-items:center;gap:14px;margin:10px 0}
+.bar{flex:1;height:12px;background:#e8edf2;border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0}
+.big{font-size:30px;font-weight:800}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.metric .n{font-size:26px;font-weight:800;color:var(--accent)}
+.metric .l{font-size:12.5px;color:var(--muted)}
+/* chat widget */
+#chatBtn{position:fixed;bottom:20px;inset-inline-end:20px;z-index:80;width:60px;height:60px;border-radius:50%;
+  background:var(--accent);color:#fff;border:0;font-size:24px;cursor:pointer;box-shadow:0 8px 26px rgba(200,16,46,.4)}
+#chat{position:fixed;bottom:92px;inset-inline-end:20px;z-index:80;width:min(400px,calc(100vw - 32px));height:min(620px,calc(100vh - 130px));
+  background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(13,27,42,.25);display:none;flex-direction:column;overflow:hidden}
+#chat.open{display:flex}
+#chatHead{background:var(--ink);color:#fff;padding:13px 16px;display:flex;align-items:center;gap:10px}
+#chatHead .st{width:9px;height:9px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 3px rgba(61,220,132,.25)}
+#chatHead b{font-size:14.5px}
+#chatHead small{display:block;color:#9fb0c0;font-size:11.5px}
+#chatLog{flex:1;overflow-y:auto;padding:14px;background:#f7f9fb;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:10px 13px;border-radius:14px;font-size:13.8px;white-space:pre-wrap;word-break:break-word}
+.msg.bot{background:#fff;border:1px solid var(--line);border-start-start-radius:4px;align-self:flex-start}
+.msg.me{background:var(--ink);color:#fff;border-end-end-radius:4px;align-self:flex-end}
+.msg .rt{display:block;font-size:10.5px;color:var(--muted);margin-top:6px;letter-spacing:.4px;text-transform:uppercase}
+.msg.me .rt{color:#8fa3b6}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.btnrow button{background:#eef2f6;border:1px solid #dde4ea;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;color:#20364a}
+.btnrow button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+#chatForm{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:#fff}
+#chatForm input{border-radius:999px}
+#chatForm button{border:0;background:var(--accent);color:#fff;border-radius:999px;padding:0 18px;font-weight:700;cursor:pointer}
+.disc{font-size:11px;color:var(--muted);padding:0 14px 10px;background:#fff}
+footer{background:var(--ink);color:#a9b8c6;padding:30px 0;font-size:13px}
+footer b{color:#fff}
+.channel-status{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;min-width:190px}
+.chip .d{width:8px;height:8px;border-radius:50%;display:inline-block;margin-inline-end:7px}
+.ok{background:#127a4b}.no{background:#c2ccd6}
+iframe#deckFrame{width:100%;height:640px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+code.k{background:#eef2f6;border:1px solid #dde4ea;border-radius:6px;padding:2px 7px;font-size:12.5px}
+details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;font-size:14.5px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="logo"><span class="dot"></span><span data-i18n="brand">Iran → Türkiye · Startup Landing</span></div>
+    <nav class="links">
+      <a href="#legal" data-i18n="nav_legal">Legal Desk</a>
+      <a href="#journey" data-i18n="nav_journey">Journey</a>
+      <a href="#sponsors" data-i18n="nav_sponsors">Sponsors</a>
+      <a href="#hotels" data-i18n="nav_hotels">Hotel map</a>
+      <a href="#intake" data-i18n="nav_intake">Intake</a>
+      <a href="#deck" data-i18n="nav_deck">Deck</a>
+      <a href="#pilot" data-i18n="nav_pilot">Pilot</a>
+      <a href="#test" data-i18n="nav_test">Live test</a>
+    </nav>
+    <div class="langs">
+      <button data-lang="en" class="on">EN</button>
+      <button data-lang="fa">FA</button>
+      <button data-lang="tr">TR</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="kicker" style="color:#e0a458" data-i18n="hero_kicker">NEW MODULE · LEGAL LANDING PARTNER</p>
+    <h1 data-i18n="hero_title">From Exhibition to Legal Landing in Türkiye</h1>
+    <p class="lead" data-i18n="hero_lead">
+      A startup landing platform for Iranian technology teams — where an unused hotel room-night,
+      a Turkish corporate sponsor and a licensed Iran–Türkiye legal desk turn an exhibition
+      conversation into a real company, a PoC and an investment.
+    </p>
+    <div>
+      <span class="pill">Startups × Lawyers × Hotels × Corporates × Investors</span>
+      <span class="pill" data-i18n="pill_pilot">Istanbul pilot: 10 teams · 30 people</span>
+    </div>
+    <div class="row" style="margin-top:22px">
+      <a class="btn" href="#intake" data-i18n="cta_apply">Apply with your startup</a>
+      <a class="btn ghost" href="#deck" data-i18n="cta_deck">Open the legal-partner deck</a>
+      <button class="btn ghost" id="openChatTop" data-i18n="cta_chat">💬 Ask the AI Navigator</button>
+    </div>
+    <div class="channel-status" id="channelStatus"></div>
+  </div>
+</div>
+
+<!-- ============ NEW MODULE: LEGAL LANDING DESK ============ -->
+<section id="legal">
+  <div class="wrap">
+    <p class="kicker" data-i18n="legal_kicker">THE NEW MODULE</p>
+    <h2 class="sec" data-i18n="legal_title">Iran–Türkiye Startup Legal Desk</h2>
+    <p class="sub" data-i18n="legal_sub">
+      Not a referral list. A dedicated desk inside the platform: the first legal point of contact for
+      selected teams, working on two layers so the same startup stays with the partner as it grows.
+    </p>
+    <div class="grid g2">
+      <div class="card">
+        <span class="badge" data-i18n="layer1_badge">LAYER 1</span>
+        <h3 data-i18n="layer1_title">Market Entry Legal — before arrival</h3>
+        <div class="tagrow" id="layer1Tags"></div>
+        <p class="muted" style="margin-top:10px" data-i18n="layer1_note">Journey steps 2–4.</p>
+      </div>
+      <div class="card">
+        <span class="badge gold" data-i18n="layer2_badge">LAYER 2</span>
+        <h3 data-i18n="layer2_title">Investment &amp; Growth Legal — after landing</h3>
+        <div class="tagrow" id="layer2Tags"></div>
+        <p class="muted" style="margin-top:10px" data-i18n="layer2_note">Journey steps 5–6.</p>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card">
+        <h3 data-i18n="safety_title">🛡️ Legal AI Safety Principle</h3>
+        <p data-i18n="safety_body">
+          The AI may say “these documents/questions may need review”. Only the licensed legal
+          professional decides the appropriate route for a specific client. Guarantee language is
+          stripped automatically and immigration questions are escalated to a human.
+        </p>
+      </div>
+      <div class="card">
+        <h3 data-i18n="pipeline_title">📥 Qualified client pipeline</h3>
+        <p data-i18n="pipeline_body">
+          The partner receives pre-screened teams with profile, founders, business model, technology,
+          funding stage, intended Turkish activity and legal requirements — the lawyer enters earlier.
+        </p>
+      </div>
+      <div class="card">
+        <h3 data-i18n="models_title">💼 Commercial models A–D</h3>
+        <div id="modelList"></div>
+      </div>
+    </div>
+
+    <div class="warn" id="disclaimerBox"></div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section id="journey" class="alt">
+  <div class="wrap">
+    <p class="kicker" data-i18n="journey_kicker">6 STEPS</p>
+    <h2 class="sec" data-i18n="journey_title">Startup journey: exhibition → legal landing</h2>
+    <p class="sub" data-i18n="journey_sub">Standard team: 3 people — Founder / Technical / Business.</p>
+    <div class="steps" id="journeySteps"></div>
+  </div>
+</section>
+
+<!-- ============ SPONSORS ============ -->
+<section id="sponsors">
+  <div class="wrap">
+    <p class="kicker" data-i18n="sponsors_kicker">3 SPONSOR TYPES, NOT JUST HOTELS</p>
+    <h2 class="sec" data-i18n="sponsors_title">Who pays for landing — and what they get</h2>
+    <p class="sub" data-i18n="sponsors_sub">
+      A hotel converts unused room-night inventory into a marketing asset. We ask for inventory, not cash.
+    </p>
+    <div class="grid g3" id="sponsorTypes"></div>
+
+    <h3 style="margin:30px 0 8px" data-i18n="corp_title">Corporate Startup Sponsorship → PoC</h3>
+    <div class="card"><pre id="corpFlow" style="margin:0;background:transparent;color:var(--ink);font-size:13.5px;max-height:none"></pre></div>
+    <div class="grid g3" style="margin-top:16px" id="corpList"></div>
+  </div>
+</section>
+
+<!-- ============ HOTEL MAP ============ -->
+<section id="hotels" class="alt">
+  <div class="wrap">
+    <p class="kicker" data-i18n="hotels_kicker">ISTANBUL · ANKARA (LATER İZMİR · ANTALYA)</p>
+    <h2 class="sec" data-i18n="hotels_title">Startup Hotel Map</h2>
+    <p class="sub" data-i18n="hotels_sub">Click a hotel to see its sponsored capacity and support.</p>
+    <div class="mapwrap">
+      <div class="mapbox"><svg id="map" viewBox="0 0 700 420" role="img" aria-label="hotel map"></svg></div>
+      <div id="hotelList"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 data-i18n="capacity_title">Sponsored capacity</h3>
+      <div id="capacity"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTAKE + ASSESSMENT ============ -->
+<section id="intake">
+  <div class="wrap">
+    <p class="kicker" data-i18n="intake_kicker">STEP 2</p>
+    <h2 class="sec" data-i18n="intake_title">Startup Legal Intake Form → Pre-Landing Assessment</h2>
+    <p class="sub" data-i18n="intake_sub">
+      Fill it here or send it to the bot on Telegram / Discord / WhatsApp — the result is the same file.
+    </p>
+    <form class="intake" id="intakeForm">
+      <div><label class="f">Startup name *</label><input name="startup_name" required placeholder="Pars Vision"></div>
+      <div><label class="f">Sector *</label>
+        <select name="sector" required>
+          <option>AI</option><option>SaaS</option><option>FinTech (where legally permitted)</option>
+          <option>HealthTech</option><option>ClimateTech</option><option>IndustrialTech</option>
+          <option>DeepTech</option><option>Other</option>
+        </select></div>
+      <div><label class="f">Stage *</label>
+        <select name="stage" required><option value="idea">idea</option><option value="mvp" selected>mvp</option>
+        <option value="revenue">revenue</option><option value="scaling">scaling</option></select></div>
+      <div><label class="f">Team size *</label><input name="team_size" type="number" min="1" max="6" value="3" required></div>
+      <div class="span2"><label class="f">Roles *</label><input name="team_roles" value="Founder / Technical / Business" required></div>
+      <div><label class="f">Existing company in Iran? *</label>
+        <select name="has_iran_entity"><option value="true">yes</option><option value="false">no</option></select></div>
+      <div><label class="f">Existing entity in Türkiye? *</label>
+        <select name="has_turkey_entity"><option value="false">no</option><option value="true">yes</option></select></div>
+      <div><label class="f">IP owned by the company? *</label>
+        <select name="ip_owned_by_company"><option value="true">yes</option><option value="false">no</option></select></div>
+      <div><label class="f">Written founder agreement? *</label>
+        <select name="founder_agreement"><option value="true">yes</option><option value="false">no</option></select></div>
+      <div><label class="f">Target city *</label>
+        <select name="intended_city"><option>Istanbul</option><option>Ankara</option><option>İzmir</option><option>Antalya</option></select></div>
+      <div><label class="f">Funding target (USD)</label><input name="funding_target_usd" type="number" min="0" value="250000"></div>
+      <div class="span2"><label class="f">Intended activity in Türkiye *</label>
+        <input name="intended_activity" required placeholder="Sell industrial AI inspection software to Turkish manufacturers"></div>
+      <div class="span2"><label class="f">Current residence / visa status of each member *</label>
+        <input name="residence_status" required placeholder="All three on tourist entry, 90 days"></div>
+      <div><label class="f">Where we met</label><input name="source" placeholder="GITEX / Elcom / university"></div>
+      <div class="span2 row">
+        <button class="btn" type="submit" id="intakeSubmit" data-i18n="intake_submit">Submit &amp; score</button>
+        <button class="btn soft" type="button" id="fillDemo" data-i18n="intake_demo">Fill demo data</button>
+      </div>
+    </form>
+    <div id="intakeResult" style="margin-top:18px"></div>
+  </div>
+</section>
+
+<!-- ============ DECK ============ -->
+<section id="deck" class="alt">
+  <div class="wrap">
+    <p class="kicker" data-i18n="deck_kicker">FOR THE LEGAL GROUP</p>
+    <h2 class="sec" data-i18n="deck_title">Legal Landing Partnership deck</h2>
+    <p class="sub" data-i18n="deck_sub">
+      The same idea, reframed for lawyers: Legal Landing Partner + Cross-Border Startup Desk.
+      Personalise it, then send PDF / HTML / Markdown.
+    </p>
+    <div class="grid g2">
+      <div class="card">
+        <form id="deckForm" class="intake">
+          <div class="span2"><label class="f">Legal group name</label><input name="legal_group_name" value="Iranian–Turkish Legal Group"></div>
+          <div><label class="f">Pilot city</label>
+            <select name="pilot_city"><option>Istanbul</option><option>Ankara</option><option>İzmir</option></select></div>
+          <div><label class="f">Cohort size</label><input name="cohort_size" type="number" value="10" min="1"></div>
+          <div><label class="f">Team size</label><input name="team_size" type="number" value="3" min="1"></div>
+          <div><label class="f">Your name</label><input name="sender_name" placeholder="—"></div>
+          <div class="span2"><label class="f">Contact</label><input name="contact" placeholder="email / phone"></div>
+          <div class="span2 row">
+            <button class="btn" type="button" id="deckPdf" data-i18n="deck_pdf">⬇ PDF</button>
+            <button class="btn soft" type="button" id="deckHtml" data-i18n="deck_html">🌐 HTML</button>
+            <button class="btn soft" type="button" id="deckMd" data-i18n="deck_md">📝 Markdown</button>
+            <a class="btn ghost" style="border-color:var(--line);color:var(--ink)" href="/deck" target="_blank" data-i18n="deck_open">Open printable page</a>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h3 data-i18n="deck_preview">Preview</h3>
+        <iframe id="deckFrame" src="/deck" title="deck preview"></iframe>
+      </div>
+    </div>
+    <pre class="out" id="deckOut" style="display:none"></pre>
+  </div>
+</section>
+
+<!-- ============ PILOT ============ -->
+<section id="pilot">
+  <div class="wrap">
+    <p class="kicker" data-i18n="pilot_kicker">ISTANBUL PILOT</p>
+    <h2 class="sec" data-i18n="pilot_title">Small, controlled, measurable</h2>
+    <p class="sub" data-i18n="pilot_sub">No large infrastructure investment required.</p>
+    <div class="metrics" id="metricCards"></div>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card">
+        <h3 data-i18n="funnel_title">Funnel projection</h3>
+        <div class="row" style="margin-bottom:10px">
+          <label class="f" style="margin:0" data-i18n="funnel_label">Inbound startups</label>
+          <input id="applied" type="number" value="100" min="10" style="max-width:140px">
+          <button class="btn soft" id="runFunnel" data-i18n="funnel_run">Project</button>
+        </div>
+        <div id="funnelTable"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="ecosystem_title">Landing ecosystem</h3>
+        <div id="ecoList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE TEST ============ -->
+<section id="test" class="alt">
+  <div class="wrap">
+    <p class="kicker" data-i18n="test_kicker">SELF-TEST</p>
+    <h2 class="sec" data-i18n="test_title">Live API test — is the bot actually working?</h2>
+    <p class="sub" data-i18n="test_sub">
+      Runs real requests against the running server on all channels. Same core, same state.
+    </p>
+    <div class="row">
+      <button class="btn" id="runTests" data-i18n="test_run">▶ Run live checks</button>
+      <span class="muted" id="testSummary"></span>
+    </div>
+    <pre class="out" id="testOut" style="margin-top:14px"></pre>
+    <details style="margin-top:14px">
+      <summary data-i18n="test_api">API endpoints</summary>
+      <pre class="out" style="margin-top:10px">POST /api/chat          {"text":"/legal","chat_id":"web-1","channel":"web"}
+POST /api/intake        {full intake JSON}      → startup + case + assessment + matches
+POST /api/assessment    {intake JSON}           → score only
+GET  /api/hotels        hotel map + sponsors + legal partners
+POST /api/deck          {"format":"pdf|html|md", "legal_group_name":"..."}
+GET  /api/deck.pdf      default deck as PDF
+GET  /api/pilot?applied=250
+GET  /api/stats         live counters
+POST /api/notify        {"text":"...","targets":[{"channel":"telegram","chat_id":"..."}]}
+POST /webhook/telegram  Telegram update
+POST /webhook/whatsapp  WhatsApp Cloud API payload (+ GET for verification)
+POST /webhook/discord   Discord event relay</pre>
+    </details>
+    <details>
+      <summary data-i18n="test_channels">Connect the three bots</summary>
+      <pre class="out" style="margin-top:10px"># Telegram
+export TELEGRAM_BOT_TOKEN="123456:ABC..."      # from @BotFather
+python -m bot.run --telegram
+
+# Discord (enable Server Messages + Message Content intents)
+export DISCORD_BOT_TOKEN="..."
+python -m bot.run --discord
+
+# WhatsApp Cloud API
+export WHATSAPP_TOKEN="EAAG..." WHATSAPP_PHONE_NUMBER_ID="1234567890"
+export WHATSAPP_APP_SECRET="..."               # optional, verifies X-Hub-Signature-256
+python -m bot.run --port 8080
+# then set the webhook to https://YOUR-DOMAIN/webhook/whatsapp
+#   verify token: startup-landing
+
+# all four at once
+python -m bot.run --telegram --discord --port 8080</pre>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>Iran → Türkiye Startup Bridge</b> · Türkiye Startup Landing Platform<br>
+    <span id="footDisc"></span>
+  </div>
+</footer>
+
+<button id="chatBtn" aria-label="chat">💬</button>
+<div id="chat" role="dialog" aria-label="AI Startup Navigator">
+  <div id="chatHead">
+    <span class="st"></span>
+    <div><b>AI Startup Navigator</b><small data-i18n="chat_sub">AI information — not legal advice</small></div>
+  </div>
+  <div id="chatLog"></div>
+  <div class="disc" data-i18n="chat_disc">A licensed legal professional owns every legal determination.</div>
+  <form id="chatForm"><input id="chatInput" autocomplete="off" placeholder="/help"><button>➤</button></form>
+</div>
+
+<script>
+/* ---------------- i18n ---------------- */
+const I18N = {
+  en:{},
+  fa:{
+    brand:"ایران → ترکیه · پلتفرم فرود استارتاپ",
+    nav_legal:"میز حقوقی", nav_journey:"مسیر", nav_sponsors:"اسپانسرها", nav_hotels:"نقشه هتل",
+    nav_intake:"فرم پذیرش", nav_deck:"دک", nav_pilot:"پایلوت", nav_test:"تست زنده",
+    hero_kicker:"ماژول جدید · شریک فرود حقوقی",
+    hero_title:"از نمایشگاه تا فرود حقوقی در ترکیه",
+    hero_lead:"پلتفرم فرود استارتاپ برای تیم‌های فناوری ایرانی — جایی که ظرفیت خالی هتل، اسپانسر صنعتی ترک و میز حقوقی دارای پروانه، یک گفت‌وگوی نمایشگاهی را به شرکت واقعی، PoC و سرمایه‌گذاری تبدیل می‌کند.",
+    pill_pilot:"پایلوت استانبول: ۱۰ تیم · ۳۰ نفر",
+    cta_apply:"درخواست با استارتاپ خود", cta_deck:"باز کردن دک مخصوص وکلا", cta_chat:"💬 پرسش از ربات",
+    legal_kicker:"ماژول جدید", legal_title:"میز حقوقی استارتاپ ایران–ترکیه",
+    legal_sub:"نه یک فهرست ارجاع. یک میز اختصاصی داخل پلتفرم: اولین نقطه تماس حقوقی تیم‌های انتخاب‌شده، در دو لایه تا استارتاپ در حال رشد با همان شریک بماند.",
+    layer1_badge:"لایه ۱", layer1_title:"حقوق ورود به بازار — پیش از ورود",
+    layer1_note:"مراحل ۲ تا ۴ مسیر.", layer2_badge:"لایه ۲", layer2_title:"حقوق سرمایه‌گذاری و رشد — پس از فرود",
+    layer2_note:"مراحل ۵ و ۶ مسیر.",
+    safety_title:"🛡️ اصل ایمنی هوش مصنوعی حقوقی",
+    safety_body:"هوش مصنوعی فقط می‌گوید «این مدارک/پرسش‌ها ممکن است نیاز به بررسی داشته باشند». تعیین مسیر مناسب هر پرونده فقط با وکیل دارای پروانه است. زبان «تضمین» به‌صورت خودکار حذف و پرسش‌های مهاجرتی به انسان ارجاع می‌شود.",
+    pipeline_title:"📥 پایپ‌لاین مشتری واجد شرایط",
+    pipeline_body:"شریک حقوقی تیم‌های پیش‌غربال‌شده را با پروفایل، بنیان‌گذاران، مدل کسب‌وکار، فناوری، مرحله جذب سرمایه، فعالیت هدف در ترکیه و نیازهای حقوقی دریافت می‌کند — وکیل زودتر وارد فرایند می‌شود.",
+    models_title:"💼 مدل‌های تجاری A تا D",
+    journey_kicker:"۶ مرحله", journey_title:"مسیر استارتاپ: نمایشگاه → فرود حقوقی",
+    journey_sub:"تیم استاندارد: ۳ نفر — بنیان‌گذار / فنی / تجاری.",
+    sponsors_kicker:"۳ نوع اسپانسر، نه فقط هتل", sponsors_title:"هزینه فرود را چه کسی می‌دهد و چه می‌گیرد",
+    sponsors_sub:"هتل ظرفیت بلااستفاده اتاق را به دارایی بازاریابی تبدیل می‌کند. ما ظرفیت می‌خواهیم، نه پول نقد.",
+    corp_title:"اسپانسری شرکتی استارتاپ → PoC",
+    hotels_kicker:"استانبول · آنکارا (بعداً ازمیر · آنتالیا)", hotels_title:"نقشه هتل‌های استارتاپ",
+    hotels_sub:"روی هر هتل کلیک کنید تا ظرفیت اسپانسری و خدمات را ببینید.",
+    capacity_title:"ظرفیت اسپانسری",
+    intake_kicker:"مرحله ۲", intake_title:"فرم پذیرش حقوقی استارتاپ → ارزیابی پیش از فرود",
+    intake_sub:"همین‌جا پر کنید یا برای ربات در تلگرام / دیسکورد / واتساپ بفرستید — نتیجه همان یک پرونده است.",
+    intake_submit:"ثبت و امتیازدهی", intake_demo:"پر کردن داده نمونه",
+    deck_kicker:"مخصوص گروه حقوقی", deck_title:"دک شراکت فرود حقوقی",
+    deck_sub:"همان ایده با قاب‌بندی مخصوص وکلا: شریک فرود حقوقی + میز استارتاپ فرامرزی. شخصی‌سازی کنید و PDF/HTML/Markdown بگیرید.",
+    deck_pdf:"⬇ PDF", deck_html:"🌐 HTML", deck_md:"📝 مارک‌داون", deck_open:"باز کردن صفحه چاپ", deck_preview:"پیش‌نمایش",
+    pilot_kicker:"پایلوت استانبول", pilot_title:"کوچک، کنترل‌شده، قابل اندازه‌گیری",
+    pilot_sub:"نیازی به سرمایه‌گذاری زیرساختی بزرگ نیست.",
+    funnel_title:"پیش‌بینی قیف", funnel_label:"استارتاپ ورودی", funnel_run:"محاسبه",
+    ecosystem_title:"اکوسیستم فرود",
+    test_kicker:"خودآزمایی", test_title:"تست زنده API — آیا ربات درست کار می‌کند؟",
+    test_sub:"درخواست‌های واقعی روی سرور در حال اجرا، در همه کانال‌ها. یک هسته، یک وضعیت مشترک.",
+    test_run:"▶ اجرای بررسی‌های زنده", test_api:"اندپوینت‌های API", test_channels:"اتصال سه ربات",
+    chat_sub:"اطلاعات هوش مصنوعی — نه مشاوره حقوقی",
+    chat_disc:"هر تعیین حقوقی بر عهده وکیل دارای پروانه است.",
+  },
+  tr:{
+    brand:"İran → Türkiye · Startup Landing",
+    nav_legal:"Hukuk Masası", nav_journey:"Süreç", nav_sponsors:"Sponsorlar", nav_hotels:"Otel haritası",
+    nav_intake:"Başvuru", nav_deck:"Sunum", nav_pilot:"Pilot", nav_test:"Canlı test",
+    hero_kicker:"YENİ MODÜL · HUKUKİ İNİŞ ORTAĞI",
+    hero_title:"Fuardan Türkiye'de hukuki inişe",
+    hero_lead:"İranlı teknoloji takımları için startup landing platformu — kullanılmayan otel oda gecesi, Türk kurumsal sponsor ve ruhsatlı İran–Türkiye hukuk masası bir fuar sohbetini gerçek bir şirkete, PoC'ye ve yatırıma dönüştürür.",
+    pill_pilot:"İstanbul pilotu: 10 takım · 30 kişi",
+    cta_apply:"Startup'ınızla başvurun", cta_deck:"Hukuk ortağı sunumunu aç", cta_chat:"💬 Yapay zekâ rehberine sor",
+    legal_kicker:"YENİ MODÜL", legal_title:"İran–Türkiye Startup Hukuk Masası",
+    legal_sub:"Bir yönlendirme listesi değil. Platform içinde özel bir masa: seçilen takımların ilk hukuki temas noktası; iki katmanda çalışır.",
+    layer1_badge:"KATMAN 1", layer1_title:"Pazara Giriş Hukuku — varıştan önce",
+    layer1_note:"Süreç adımları 2–4.", layer2_badge:"KATMAN 2", layer2_title:"Yatırım ve Büyüme Hukuku — inişten sonra",
+    layer2_note:"Süreç adımları 5–6.",
+    safety_title:"🛡️ Hukuki Yapay Zekâ Güvenlik İlkesi",
+    safety_body:"Yapay zekâ yalnızca “şu belgeler/sorular incelenmeli” diyebilir. Somut olay için uygun yolu yalnızca ruhsatlı avukat belirler. Garanti dili otomatik temizlenir, göçmenlik soruları insana aktarılır.",
+    pipeline_title:"📥 Nitelikli müşteri hattı",
+    pipeline_body:"Hukuk ortağı ön elemesi yapılmış takımlar alır: profil, kurucular, iş modeli, teknoloji, yatırım aşaması, planlanan faaliyet ve hukuki gereksinimler.",
+    models_title:"💼 Ticari modeller A–D",
+    journey_kicker:"6 ADIM", journey_title:"Startup süreci: fuar → hukuki iniş",
+    journey_sub:"Standart takım: 3 kişi — Kurucu / Teknik / Ticari.",
+    sponsors_kicker:"3 SPONSOR TÜRÜ", sponsors_title:"İniş maliyetini kim karşılar, ne kazanır",
+    sponsors_sub:"Otel kullanılmayan oda kapasitesini pazarlama varlığına çevirir. Nakit değil kapasite istiyoruz.",
+    corp_title:"Kurumsal Startup Sponsorluğu → PoC",
+    hotels_kicker:"İSTANBUL · ANKARA", hotels_title:"Startup Otel Haritası",
+    hotels_sub:"Kapasiteyi görmek için bir otele tıklayın.", capacity_title:"Sponsor kapasitesi",
+    intake_kicker:"ADIM 2", intake_title:"Startup Hukuk Başvuru Formu → Ön İniş Değerlendirmesi",
+    intake_sub:"Burada doldurun veya Telegram / Discord / WhatsApp botuna gönderin — sonuç aynı dosyadır.",
+    intake_submit:"Gönder ve puanla", intake_demo:"Demo veri doldur",
+    deck_kicker:"HUKUK GRUBU İÇİN", deck_title:"Hukuki İniş Ortaklığı sunumu",
+    deck_sub:"Aynı fikir, avukatlar için yeniden çerçevelenmiş: Hukuki İniş Ortağı + Sınır Ötesi Startup Masası.",
+    deck_pdf:"⬇ PDF", deck_html:"🌐 HTML", deck_md:"📝 Markdown", deck_open:"Yazdırılabilir sayfa", deck_preview:"Önizleme",
+    pilot_kicker:"İSTANBUL PİLOTU", pilot_title:"Küçük, kontrollü, ölçülebilir",
+    pilot_sub:"Büyük altyapı yatırımı gerekmez.",
+    funnel_title:"Huni projeksiyonu", funnel_label:"Gelen startup", funnel_run:"Hesapla",
+    ecosystem_title:"İniş ekosistemi",
+    test_kicker:"KENDİ KENDİNE TEST", test_title:"Canlı API testi — bot gerçekten çalışıyor mu?",
+    test_sub:"Çalışan sunucuya tüm kanallarda gerçek istek atar. Aynı çekirdek, aynı durum.",
+    test_run:"▶ Canlı kontrolleri çalıştır", test_api:"API uçları", test_channels:"Üç botu bağla",
+    chat_sub:"Yapay zekâ bilgisi — hukuki tavsiye değildir",
+    chat_disc:"Her hukuki takdir ruhsatlı avukata aittir.",
+  }
+};
+let LANG = localStorage.getItem("lang") || "en";
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === "fa" ? "rtl" : "ltr";
+  document.body.classList.toggle("rtl", LANG === "fa");
+  const dict = I18N[LANG] || {};
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    if(dict[k]) el.textContent = dict[k];
+  });
+  document.querySelectorAll(".langs button").forEach(b=>b.classList.toggle("on", b.dataset.lang===LANG));
+  if(window._DISC) document.getElementById("disclaimerBox").textContent = window._DISC[LANG] || window._DISC.en;
+  if(window._FOOT) document.getElementById("footDisc").textContent = window._FOOT[LANG] || window._FOOT.en;
+  renderJourney(); renderLayers();
+}
+document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;localStorage.setItem("lang",LANG);applyLang();});
+
+const api = (path, opts) => fetch(path, opts).then(r=>{ if(!r.ok) throw new Error(r.status+" "+path); return r; });
+const japi = (path, body) => api(path, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body||{})}).then(r=>r.json());
+
+/* ---------------- boot data ---------------- */
+let DATA = {};
+async function boot(){
+  const [info, journey, hotels] = await Promise.all([
+    japi("/api/info"), japi("/api/journey"), japi("/api/hotels")
+  ]);
+  DATA = {info, journey, hotels};
+  window._DISC = {
+    en: "⚖️ AI information — not legal advice. The AI Startup Navigator prepares, organises and routes; only a licensed legal professional (a lawyer admitted to a Turkish Bar, or the authorised Legal Desk partner) determines the legally appropriate route. No residence permit, work permit, kimlik, visa or company-registration outcome is guaranteed.",
+    fa: "⚖️ این اطلاعات توسط هوش مصنوعی تولید شده و مشاوره حقوقی نیست. هوش مصنوعی فقط آماده‌سازی، دسته‌بندی و ارجاع می‌کند؛ تعیین مسیر حقوقی هر پرونده فقط با وکیل دارای پروانه (عضو کانون وکلای ترکیه) یا شریک حقوقی میز است. هیچ نتیجه‌ای درباره اقامت، کیملیک، اجازه کار، ویزا یا ثبت شرکت تضمین نمی‌شود.",
+    tr: "⚖️ Yapay zekâ bilgilendirmesi — hukuki tavsiye değildir. Yapay zekâ hazırlar, düzenler ve yönlendirir; somut olay için uygun yolu yalnızca ruhsatlı avukat belirler. Oturum, çalışma izni, kimlik, vize veya şirket kuruluşu sonucu garanti edilmez."
+  };
+  window._FOOT = window._DISC;
+  document.getElementById("disclaimerBox").textContent = window._DISC[LANG];
+  document.getElementById("footDisc").textContent = window._FOOT[LANG];
+  renderChannels(info.channels);
+  renderJourney(); renderLayers(); renderSponsors(hotels); renderMap(hotels);
+  renderCorp(hotels); renderModels(); renderEco(hotels); renderCapacity(hotels);
+  await renderPilot();
+  applyLang();
+  chatOpen(false);
+}
+
+function renderChannels(list){
+  const el = document.getElementById("channelStatus");
+  el.innerHTML = list.map(c=>{
+    const on = c.status === "ready";
+    return `<div class="chip" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#e7eef5">
+      <span class="d ${on?"ok":"no"}"></span><b>${c.channel}</b><br><span style="font-size:11.5px;color:#a9b8c6">${c.status}</span></div>`;
+  }).join("");
+}
+function renderLayers(){
+  const L = (DATA.journey||{}).layers; if(!L) return;
+  const fill = (id, key) => { document.getElementById(id).innerHTML = (L[key].items||[]).map(i=>`<span class="tag">${i}</span>`).join(""); };
+  fill("layer1Tags","layer1"); fill("layer2Tags","layer2");
+}
+function renderJourney(){
+  const j = (DATA.journey||{}).journey; if(!j) return;
+  document.getElementById("journeySteps").innerHTML = j.map(s=>`
+    <div class="step">
+      <div class="owner">${s.owner}</div>
+      <h4>${LANG==="fa" ? (s.fa||s.title) : s.title}</h4>
+      <ul>${s.channels.map(c=>`<li>${c}</li>`).join("")}</ul>
+      <p class="muted" style="margin:8px 0 0">→ ${s.output}</p>
+      ${s.no_guarantee ? `<div class="warn" style="margin-top:10px;font-size:12.5px">${LANG==="fa"?"هیچ نتیجه مهاجرتی تضمین نمی‌شود.":"No guaranteed immigration result is promised."}</div>` : ""}
+    </div>`).join("");
+}
+function renderModels(){
+  const m = {
+    A:["Referral","Platform introduces a qualified startup; the partner contracts directly with it."],
+    B:["Preferred Legal Partner","Designated Official Legal Landing Partner of the program."],
+    C:["Startup Legal Package","Pre-Landing Assessment → Company/Market Entry → Commercial Setup → Ongoing support."],
+    D:["Corporate Legal Support","Partner also represents Turkish corporate sponsors and investors — value on both sides."]
+  };
+  document.getElementById("modelList").innerHTML = Object.entries(m).map(([k,v])=>
+    `<div style="margin-bottom:9px"><span class="badge">Model ${k}</span> <b>${v[0]}</b><div class="muted">${v[1]}</div></div>`).join("");
+}
+function renderSponsors(h){
+  const st = h.sponsor_types;
+  document.getElementById("sponsorTypes").innerHTML = Object.entries(st).map(([k,v])=>`
+    <div class="card"><span class="badge ${k==="A"?"gold":k==="B"?"teal":""}">${k}</span>
+      <h3 style="margin-top:8px">${v.name}</h3><p>${v.who}</p>
+      <div class="tagrow">${v.gives.map(g=>`<span class="tag">${g}</span>`).join("")}</div>
+      <p style="margin-top:10px"><b>Gets:</b> ${v.gets}</p></div>`).join("");
+}
+function renderCorp(h){
+  document.getElementById("corpFlow").textContent =
+`Turkish company states the problem it wants solved
+   ↓
+Platform searches the Iranian Startup Pool
+   ↓
+3 matched teams are presented
+   ↓
+Company selects one and sponsors the 3-person team
+   ↓
+Startup enters Türkiye (hotel + workspace + Legal Desk)
+   ↓
+Corporate PoC
+   ↓
+Commercial contract / investment / strategic partnership`;
+  document.getElementById("corpList").innerHTML = (h.corporate_sponsors||[]).map(c=>`
+    <div class="card"><h3>${c.name}</h3><p class="muted">${c.city} · ${c.status} · ${c.startup_slots} slot(s)</p>
+    <div class="tagrow">${c.sector_interest.map(s=>`<span class="tag">${s}</span>`).join("")}</div>
+    <p style="margin-top:10px"><b>Offers:</b> ${c.offers.join(", ")}</p></div>`).join("");
+}
+function renderEco(h){
+  document.getElementById("ecoList").innerHTML = (h.ecosystem_sponsors||[]).map(e=>
+    `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><b>${e.name}</b>
+     <span class="badge teal" style="margin-inline-start:6px">${e.type}</span>
+     <div class="muted">${e.offers.join(" · ")}</div></div>`).join("");
+}
+function renderCapacity(h){
+  document.getElementById("capacity").innerHTML =
+    `<div class="metrics">${["Istanbul","Ankara"].map(city=>{
+      const rooms = (h.hotels||[]).filter(x=>x.city===city).reduce((a,b)=>a+b.startup_rooms,0);
+      const count = (h.hotels||[]).filter(x=>x.city===city).length;
+      return `<div class="metric"><div class="n">${rooms}</div><div class="l">sponsored room nights · ${city} (${count} hotels)</div></div>`;
+    }).join("")}
+    <div class="metric"><div class="n">${(h.corporate_sponsors||[]).reduce((a,b)=>a+b.startup_slots,0)}</div><div class="l">corporate sponsor slots</div></div>
+    <div class="metric"><div class="n">${(h.legal_partners||[]).length}</div><div class="l">legal desk partner(s)</div></div></div>`;
+}
+/* ---------------- hotel map (inline SVG, no external tiles) ---------------- */
+function renderMap(h){
+  const hotels = h.hotels||[];
+  const svg = document.getElementById("map");
+  const lats = hotels.map(x=>x.lat), lngs = hotels.map(x=>x.lng);
+  const minLa=Math.min(...lats)-.6, maxLa=Math.max(...lats)+.6;
+  const minLo=Math.min(...lngs)-1.2, maxLo=Math.max(...lngs)+1.2;
+  const X = lo => 60 + ((lo-minLo)/(maxLo-minLo))*580;
+  const Y = la => 380 - ((la-minLa)/(maxLa-minLa))*320;
+  let s = `<defs><linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#12324f"/><stop offset="1" stop-color="#0b2438"/></linearGradient></defs>
+    <rect width="700" height="420" fill="url(#sea)"/>
+    <g stroke="#1d4468" stroke-width="1">`;
+  for(let i=0;i<=10;i++) s += `<line x1="${i*70}" y1="0" x2="${i*70}" y2="420"/><line x1="0" y1="${i*42}" x2="700" y2="${i*42}"/>`;
+  s += `</g>`;
+  // Bosphorus-ish decorative waterway
+  s += `<path d="M300,20 C330,110 260,180 300,260 C330,330 300,390 320,410" stroke="#2a6d99" stroke-width="14" fill="none" opacity=".55"/>`;
+  const groups = {};
+  hotels.forEach(x=>{(groups[x.city]=groups[x.city]||[]).push(x);});
+  Object.entries(groups).forEach(([city,list],gi)=>{
+    const cx = list.reduce((a,b)=>a+X(b.lng),0)/list.length, cy = list.reduce((a,b)=>a+Y(b.lat),0)/list.length;
+    s += `<text x="${cx}" y="${cy-46}" fill="#8fb3d1" font-size="13" font-weight="700" text-anchor="middle">${city.toUpperCase()}</text>`;
+    list.forEach((x,i)=>{
+      const px = X(x.lng)+i*6, py = Y(x.lat);
+      const color = x.support_type==="free" ? "#e0a458" : x.support_type==="corporate" ? "#0f8b8d" : "#c8102e";
+      s += `<g class="pin" data-id="${x.id}" onclick="selectHotel('${x.id}')">
+        <circle cx="${px}" cy="${py}" r="16" fill="${color}" opacity=".18"/>
+        <circle cx="${px}" cy="${py}" r="8" fill="${color}" stroke="#fff" stroke-width="2"/>
+        <text x="${px}" y="${py+4}" fill="#04121f" font-size="9" font-weight="800" text-anchor="middle">${x.startup_rooms}</text>
+        <text x="${px}" y="${py+26}" fill="#dbe6f0" font-size="10.5" text-anchor="middle">${x.name.split("—")[0].trim()}</text></g>`;
+    });
+  });
+  s += `<g fill="#7d97ad" font-size="10.5">
+    <circle cx="70" cy="398" r="6" fill="#e0a458"/><text x="82" y="402">free rooms</text>
+    <circle cx="180" cy="398" r="6" fill="#c8102e"/><text x="192" y="402">50% sponsored</text>
+    <circle cx="310" cy="398" r="6" fill="#0f8b8d"/><text x="322" y="402">corporate-sponsored</text></g>`;
+  svg.innerHTML = s;
+  document.getElementById("hotelList").innerHTML = hotels.map(x=>`
+    <div class="hotelitem" id="hi-${x.id}" onclick="selectHotel('${x.id}')">
+      <b>${x.name}</b> <span class="badge ${x.support_type==="free"?"gold":"teal"}">${x.support_type}</span>
+      <div class="muted">${x.city} / ${x.district} · ${x.startup_rooms} sponsored rooms · metro ${x.metro_min} min</div>
+      <div class="tagrow">${x.support.map(s2=>`<span class="tag">${s2}</span>`).join("")}</div>
+      <div class="muted" style="margin-top:6px">${x.exhibition} · ${x.sponsor_level}</div>
+    </div>`).join("");
+}
+window.selectHotel = id => {
+  document.querySelectorAll(".hotelitem").forEach(e=>e.classList.remove("on"));
+  const el = document.getElementById("hi-"+id); if(el){el.classList.add("on"); el.scrollIntoView({block:"nearest",behavior:"smooth"});}
+  document.querySelectorAll(".pin").forEach(p=>p.style.opacity = p.dataset.id===id ? 1 : .45);
+};
+/* ---------------- intake + assessment ---------------- */
+const booly = v => v === true || v === "true" || v === "yes";
+function intakeFromForm(){
+  const f = new FormData(document.getElementById("intakeForm"));
+  const o = Object.fromEntries(f.entries());
+  ["has_iran_entity","has_turkey_entity","ip_owned_by_company","founder_agreement"].forEach(k=>o[k]=booly(o[k]));
+  o.team_size = parseInt(o.team_size||3,10); o.funding_target_usd = parseInt(o.funding_target_usd||0,10);
+  return o;
+}
+document.getElementById("fillDemo").onclick = () => {
+  const f = document.getElementById("intakeForm");
+  f.startup_name.value = "Pars Vision AI"; f.sector.value = "IndustrialTech"; f.stage.value = "revenue";
+  f.team_size.value = 3; f.has_iran_entity.value = "true"; f.has_turkey_entity.value = "false";
+  f.ip_owned_by_company.value = "true"; f.founder_agreement.value = "true"; f.intended_city.value = "Istanbul";
+  f.funding_target_usd.value = 250000;
+  f.intended_activity.value = "Sell industrial AI visual-inspection software to Turkish manufacturers; run PoCs in Bursa and Istanbul";
+  f.residence_status.value = "Three Iranian nationals, currently short-term tourist entry, no Turkish residence yet";
+  f.source.value = "GITEX";
+};
+document.getElementById("intakeForm").onsubmit = async e => {
+  e.preventDefault();
+  const btn = document.getElementById("intakeSubmit"); btn.disabled = true;
+  const out = document.getElementById("intakeResult");
+  out.innerHTML = `<div class="card">…</div>`;
+  try{
+    const r = await japi("/api/intake", {intake: intakeFromForm(), channel:"web"});
+    const a = r.assessment, pct = Math.round(a.score*100);
+    const bandColor = a.band==="ready" ? "var(--ok)" : a.band==="needs_work" ? "#b4761a" : "var(--accent)";
+    out.innerHTML = `
+      <div class="card">
+        <span class="badge">CASE ${r.case_id}</span>
+        <h3 style="margin-top:8px">${r.startup.name} — Pre-Landing Legal Assessment</h3>
+        <div class="score"><div class="big" style="color:${bandColor}">${pct}</div>
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <b style="color:${bandColor}">${a.band.replace("_"," ").toUpperCase()}</b></div>
+        <p class="muted">Start with: <b>${a.layer==="layer2"?"Layer 2 — Investment & Growth Legal":"Layer 1 — Market Entry Legal"}</b>
+        · journey step ${r.step} · assigned to a licensed professional: yes</p>
+        <div class="grid g2" style="margin-top:12px">
+          <div><h4 style="margin:0 0 6px">Why</h4><ul class="muted">${a.reasons.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+          <div><h4 style="margin:0 0 6px">Red flags for the lawyer</h4>
+            <ul class="muted">${a.red_flags.length?a.red_flags.map(x=>`<li>${x}</li>`).join(""):"<li>none</li>"}</ul></div>
+        </div>
+        <details><summary>Document checklist (${a.document_checklist.length})</summary>
+          <ul class="muted">${a.document_checklist.map(x=>`<li>☐ ${x}</li>`).join("")}</ul></details>
+        <details><summary>Questions the legal partner must answer (${a.questions_for_lawyer.length})</summary>
+          <ul class="muted">${a.questions_for_lawyer.map(x=>`<li>${x}</li>`).join("")}</ul></details>
+        <details><summary>Structure options (decision belongs to the lawyer)</summary>
+          <ul class="muted">${a.recommended_structures.map(x=>`<li>${x}</li>`).join("")}</ul></details>
+        <div class="grid g2" style="margin-top:12px">
+          <div class="card" style="background:#fafbfc"><h4 style="margin:0 0 6px">🏨 Best hotel match</h4>
+            ${(r.hotel_matches||[]).slice(0,2).map(m=>`<div class="muted"><b>${m.hotel.name}</b> (${m.hotel.city}/${m.hotel.district}) —
+              ${m.hotel.startup_rooms} rooms · ${m.hotel.support_type}<br>why: ${m.why.join(", ")}</div>`).join("") || "none in this city"}</div>
+          <div class="card" style="background:#fafbfc"><h4 style="margin:0 0 6px">🏭 Corporate sponsor candidate</h4>
+            ${(r.corporate_matches||[]).slice(0,2).map(m=>`<div class="muted"><b>${m.sponsor.name}</b> — ${m.sponsor.offers.join(", ")}<br>why: ${m.why.join(", ")||"sector/city proximity"}</div>`).join("") || "no match"}</div>
+        </div>
+        <div class="warn">${window._DISC[LANG]}</div>
+      </div>`;
+    out.scrollIntoView({behavior:"smooth", block:"center"});
+  }catch(err){
+    out.innerHTML = `<div class="card"><b style="color:var(--accent)">Error:</b> ${err.message}</div>`;
+  } finally { btn.disabled = false; }
+};
+/* ---------------- deck ---------------- */
+function deckOpts(){
+  const f = new FormData(document.getElementById("deckForm"));
+  const o = Object.fromEntries(f.entries());
+  o.cohort_size = parseInt(o.cohort_size||10,10); o.team_size = parseInt(o.team_size||3,10);
+  return o;
+}
+function download(blob, name){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+document.getElementById("deckPdf").onclick = async ()=>{
+  const o = deckOpts(); o.format = "pdf";
+  const r = await api("/api/deck", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(o)});
+  download(await r.blob(), "legal-landing-partnership.pdf");
+};
+document.getElementById("deckHtml").onclick = async ()=>{
+  const o = deckOpts(); o.format = "html";
+  const r = await api("/api/deck", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(o)});
+  download(await r.blob(), "legal-landing-partnership.html");
+};
+document.getElementById("deckMd").onclick = async ()=>{
+  const o = deckOpts(); o.format = "md";
+  const r = await japi("/api/deck", o);
+  const out = document.getElementById("deckOut"); out.style.display="block";
+  out.textContent = "# " + r.filename + "\n\n" + r.markdown;
+  download(new Blob([r.markdown],{type:"text/markdown"}), r.filename);
+};
+/* ---------------- pilot ---------------- */
+async function renderPilot(){
+  const applied = parseInt(document.getElementById("applied").value||"100",10);
+  const r = await japi("/api/pilot?applied="+applied);
+  document.getElementById("metricCards").innerHTML = r.metrics.map(m=>
+    `<div class="metric"><div class="n">${m.target}</div><div class="l">${m.metric}</div></div>`).join("");
+  document.getElementById("funnelTable").innerHTML =
+    `<table><tr><th>stage</th><th>pilot</th><th>projected (${applied})</th></tr>` +
+    r.funnel.map(f=>`<tr><td>${f.stage}</td><td>${f.pilot}</td><td><b>${f.projected}</b></td></tr>`).join("") + "</table>";
+}
+document.getElementById("runFunnel").onclick = renderPilot;
+/* ---------------- chat widget ---------------- */
+const sessionId = "web-" + (localStorage.getItem("sid") || Math.random().toString(36).slice(2,10));
+localStorage.setItem("sid", sessionId);
+const chatLog = document.getElementById("chatLog");
+function addMsg(text, who, meta){
+  const d = document.createElement("div"); d.className = "msg "+who;
+  d.textContent = text;
+  if(meta) { const s = document.createElement("span"); s.className="rt"; s.textContent = meta; d.appendChild(s); }
+  chatLog.appendChild(d); chatLog.scrollTop = chatLog.scrollHeight; return d;
+}
+function addButtons(btns){
+  if(!btns || !btns.length) return;
+  const row = document.createElement("div"); row.className="btnrow";
+  btns.slice(0,8).forEach(b=>{ const el=document.createElement("button"); el.textContent=b.label;
+    el.onclick=()=>send(b.action); row.appendChild(el); });
+  const wrap = document.createElement("div"); wrap.className="msg bot"; wrap.style.padding="8px";
+  wrap.appendChild(row); chatLog.appendChild(wrap); chatLog.scrollTop = chatLog.scrollHeight;
+}
+async function send(text){
+  if(!text.trim()) return;
+  addMsg(text, "me");
+  document.getElementById("chatInput").value = "";
+  const pending = addMsg("…", "bot");
+  try{
+    const r = await japi("/api/chat", {text, chat_id: sessionId, channel:"web", user_id: sessionId});
+    pending.textContent = r.text;
+    const s = document.createElement("span"); s.className="rt";
+    s.textContent = `route: ${r.route} · intent: ${r.intent}${r.escalated?" · 👤 escalated to licensed professional":""}`;
+    pending.appendChild(s);
+    (r.documents||[]).forEach(d=>{ const x=document.createElement("div"); x.className="msg bot";
+      x.textContent = `📎 ${d.filename} (${d.size} bytes) — delivered natively by Telegram/Discord/WhatsApp; use the Deck section to download here.`;
+      chatLog.appendChild(x); });
+    addButtons(r.buttons);
+  }catch(e){ pending.textContent = "Error: " + e.message; }
+}
+document.getElementById("chatForm").onsubmit = e => { e.preventDefault(); send(document.getElementById("chatInput").value); };
+function chatOpen(open){
+  const c = document.getElementById("chat"); c.classList.toggle("open", open);
+  if(open && !chatLog.childElementCount){
+    addMsg("Hello 👋 I'm the AI Startup Navigator.\nSend /help for the menu, /intake to apply, /legal for the Legal Desk.", "bot", "web · ready");
+    addButtons([{label:"📝 /intake",action:"/intake"},{label:"🏛️ /legal",action:"/legal"},
+                {label:"🗺️ /journey",action:"/journey"},{label:"🏨 /hotels",action:"/hotels"},
+                {label:"📄 /deck",action:"/deck"},{label:"🧪 /pilot",action:"/pilot"}]);
+  }
+}
+document.getElementById("chatBtn").onclick = ()=>chatOpen(!document.getElementById("chat").classList.contains("open"));
+document.getElementById("openChatTop").onclick = ()=>{chatOpen(true);document.getElementById("chatInput").focus();};
+
+/* ---------------- live self-test ---------------- */
+const CHECKS = [
+  {name:"GET /api/health", run: async()=>{ const r=await japi("/api/health"); return r.ok ? "ok · channels: "+r.channels.join(", ") : "not ok"; }},
+  {name:"GET /api/info (modules registered)", run: async()=>{ const r=await japi("/api/info"); return r.modules.length+" modules · "+r.channels.filter(c=>c.status==="ready").length+" channels ready"; }},
+  {name:"POST /api/chat '/legal' → escalated", run: async()=>{ const r=await japi("/api/chat",{text:"/legal",chat_id:"t-legal",channel:"web"});
+      if(!/LEGAL DESK/i.test(r.text)) throw new Error("missing Legal Desk content");
+      if(!/not legal advice|مشاوره حقوقی نیست|hukuki tavsiye değildir/i.test(r.text)) throw new Error("disclaimer missing");
+      if(!r.escalated) throw new Error("not escalated");
+      return "route="+r.route+" · escalated="+r.escalated+" · "+r.text.length+" chars"; }},
+  {name:"Safety: 'kimlik guarantee' is refused & escalated", run: async()=>{ const r=await japi("/api/chat",{text:"can you guarantee kimlik and residence permit for my team?",chat_id:"t-safe",channel:"web"});
+      if(/guarantee/i.test(r.text.replace(/\[outcome not guaranteed\]/g,""))) throw new Error("guarantee language survived");
+      if(!r.escalated) throw new Error("not escalated");
+      if(!r.meta.safety.triggered.length) throw new Error("no trigger detected");
+      return "triggers="+r.meta.safety.triggered.join("/")+" · removed="+r.meta.safety.removed_guarantees.length; }},
+  {name:"Persian input routed correctly (fa)", run: async()=>{ const r=await japi("/api/chat",{text:"سلام، برای ثبت شرکت در ترکیه و گرفتن اقامت چه کار کنم؟",chat_id:"t-fa",channel:"web"});
+      return "intent="+r.intent+" · lang="+r.language+" · escalated="+r.escalated; }},
+  {name:"Turkish input routed correctly (tr)", run: async()=>{ const r=await japi("/api/chat",{text:"merhaba, Türkiye'de şirket kurmak ve çalışma izni için hangi yol izlenmeli?",chat_id:"t-tr",channel:"web"});
+      return "intent="+r.intent+" · lang="+r.language+" · escalated="+r.escalated; }},
+  {name:"Intake form → assessment (ready band)", run: async()=>{ const intake={startup_name:"Test Ready Co",sector:"AI",stage:"revenue",team_size:3,
+        team_roles:"Founder / Technical / Business",has_iran_entity:true,has_turkey_entity:false,ip_owned_by_company:true,founder_agreement:true,
+        intended_city:"Istanbul",intended_activity:"Sell AI quality-inspection software to Turkish manufacturers and run PoCs",
+        residence_status:"three Iranian nationals on short-term entry",funding_target_usd:250000,source:"GITEX"};
+      const r=await japi("/api/intake",{intake,channel:"telegram"});
+      if(!r.case_id) throw new Error("no case created");
+      if(r.assessment.band!=="ready") throw new Error("expected ready, got "+r.assessment.band);
+      return "case="+r.case_id+" · score="+r.assessment.score+" · band="+r.assessment.band+" · step="+r.step; }},
+  {name:"Intake validation rejects missing fields", run: async()=>{ const res=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intake:{startup_name:"x"}})});
+      if(res.status!==422) throw new Error("expected 422, got "+res.status);
+      const r=await res.json(); return "422 · missing="+r.missing.length+" fields"; }},
+  {name:"Weak startup is scored not_ready / needs_work", run: async()=>{ const r=await japi("/api/assessment",{intake:{startup_name:"Weak",sector:"AI",stage:"idea",team_size:9,
+        has_iran_entity:false,ip_owned_by_company:false,founder_agreement:false,intended_city:"Istanbul",intended_activity:"-",residence_status:"-"}});
+      if(r.assessment.band==="ready") throw new Error("weak profile scored ready");
+      return "band="+r.assessment.band+" · score="+r.assessment.score+" · red flags="+r.assessment.red_flags.length; }},
+  {name:"Hotel matching respects capacity & city", run: async()=>{ const r=await japi("/api/hotels?city=Istanbul");
+      const rooms=r.total_sponsored_rooms; if(rooms<1) throw new Error("no sponsored rooms");
+      const m=r.matches[0]; if(m.hotel.city!=="Istanbul") throw new Error("wrong city");
+      return rooms+" rooms · best="+m.hotel.name+" (score "+m.score+")"; }},
+  {name:"Deck generation (md + pdf)", run: async()=>{ const md=await japi("/api/deck",{format:"md",legal_group_name:"Test Legal Group"});
+      if(!/Test Legal Group/.test(md.markdown)) throw new Error("not personalised");
+      const res=await api("/api/deck.pdf"); const blob=await res.blob();
+      const head=new TextDecoder().decode((await blob.slice(0,5).arrayBuffer()));
+      if(head!=="%PDF-") throw new Error("invalid pdf header");
+      return "md "+md.markdown.split(/\\s+/).length+" words · pdf "+blob.size+" bytes"; }},
+  {name:"Funnel projection scales", run: async()=>{ const a=await japi("/api/pilot?applied=100"), b=await japi("/api/pilot?applied=500");
+      if(b.funnel[2].projected<=a.funnel[2].projected) throw new Error("funnel did not scale");
+      return "100→"+a.funnel[2].projected+" selected, 500→"+b.funnel[2].projected+" selected"; }},
+  {name:"Cross-channel state (web ↔ telegram ↔ discord ↔ whatsapp)", run: async()=>{
+      const chat="bridge-1";
+      await japi("/api/chat",{text:"/intake",chat_id:chat,channel:"telegram"});
+      const t=await japi("/api/chat",{text:"startup_name: Bridge Co\nsector: SaaS\nstage: mvp\nteam_size: 3\nteam_roles: F/T/B\nhas_iran_entity: yes\nhas_turkey_entity: no\nip_owned_by_company: yes\nfounder_agreement: yes\nintended_city: Istanbul\nintended_activity: sell SaaS to Turkish logistics companies\nresidence_status: tourist entry\nfunding_target_usd: 100000\nsource: Elcom",chat_id:chat,channel:"telegram"});
+      if(!/Intake complete/.test(t.text)) throw new Error("intake did not complete on telegram");
+      const w=await japi("/api/chat",{text:"/metrics",chat_id:chat,channel:"whatsapp"});
+      const d=await japi("/api/chat",{text:"/assessment",chat_id:chat,channel:"discord"});
+      if(!/legal cases open/.test(w.text)) throw new Error("metrics failed");
+      return "telegram intake ok · whatsapp metrics ok · discord assessment "+(/No assessment|PRE-LANDING/.test(d.text)?"ok":"route="+d.route); }},
+  {name:"WhatsApp webhook parses payload (no credentials needed)", run: async()=>{
+      const payload={entry:[{changes:[{value:{contacts:[{wa_id:"905551234567",profile:{name:"Test User"}}],
+        messages:[{from:"905551234567",id:"wamid.TEST",type:"text",text:{body:"/hotels"}}]}}]}]};
+      const r=await fetch("/webhook/whatsapp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      const d=await r.json();
+      if(!d.processed || !d.processed.length) throw new Error("nothing processed");
+      return "processed="+d.processed.length+" · reply route="+((d.processed[0].reply||{}).route||"n/a (credentials configured)"); }},
+  {name:"Telegram webhook parses update", run: async()=>{
+      const update={update_id:1,message:{message_id:11,date:1,text:"/journey",from:{id:42,first_name:"Test",username:"t"},chat:{id:42,type:"private"}}};
+      const r=await fetch("/webhook/telegram",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(update)});
+      const d=await r.json();
+      if(!d.reply || !/STEP 1/.test(d.reply.text)) throw new Error("journey not returned");
+      return "route="+d.reply.route+" · delivered="+!!d.delivered+" · "+d.reply.text.length+" chars"; }},
+  {name:"Cross-channel notify (simulated delivery)", run: async()=>{
+      const r=await japi("/api/notify",{text:"New qualified lead for the Legal Desk",targets:[{channel:"simulated",chat_id:"legal-partner-desk"}]});
+      if(!r.results[0].ok) throw new Error("notify failed");
+      return "delivered to "+r.results.length+" target(s)"; }},
+  {name:"GET /api/stats", run: async()=>{ const r=await japi("/api/stats");
+      return `startups=${r.startups} · cases=${r.legal_cases} · ready=${r.ready} · rooms=${r.sponsored_rooms}`; }},
+];
+document.getElementById("runTests").onclick = async ()=>{
+  const out = document.getElementById("testOut"); out.textContent = "";
+  document.getElementById("testSummary").textContent = "running…";
+  let pass=0, fail=0;
+  for(const c of CHECKS){
+    try{
+      const detail = await c.run();
+      pass++; out.textContent += `✅ PASS  ${c.name}\n        ${detail}\n`;
+    }catch(e){
+      fail++; out.textContent += `❌ FAIL  ${c.name}\n        ${e.message}\n`;
+    }
+    out.scrollTop = out.scrollHeight;
+  }
+  out.textContent += `\n${pass}/${pass+fail} live checks passed`;
+  document.getElementById("testSummary").innerHTML =
+    `<b style="color:${fail?"var(--accent)":"var(--ok)"}">${pass}/${pass+fail} passed</b>`;
+};
+boot().catch(e=>{ document.getElementById("testOut").textContent = "boot error: "+e.message; });
+</script>
+</body>
+</html>

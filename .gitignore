@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.cache/
+.local/
+.pytest_cache/
+*.tmp
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+*.egg-info/
+.env
+.env.*
+!.env.example
+# runtime state produced by the bot (sessions, leads, legal cases, audit log)
+data/sessions.json
+data/startups.json
+data/legal_cases.json
+data/audit.json
+*.log
+.DS_Store

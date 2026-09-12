@@ -1,0 +1,138 @@
+{
+  "hotels": [
+    {
+      "id": "h1",
+      "name": "Hotel A — Startup Partner Hotel",
+      "city": "Istanbul",
+      "district": "Şişli",
+      "lat": 41.0612,
+      "lng": 28.9884,
+      "startup_rooms": 10,
+      "support_type": "free",
+      "support": ["Room", "Breakfast", "Meeting room", "Coworking desk", "Airport transfer"],
+      "sectors": ["AI", "SaaS", "DeepTech"],
+      "metro_min": 4,
+      "exhibition": "Istanbul Congress Center / Lütfi Kırdar — 12 min",
+      "meeting_room": true,
+      "coworking": true,
+      "airport_transfer": true,
+      "corporate_sponsorship": true,
+      "sponsor_level": "Official Startup Accommodation Partner"
+    },
+    {
+      "id": "h2",
+      "name": "Hotel B",
+      "city": "Istanbul",
+      "district": "Kadıköy",
+      "lat": 40.9903,
+      "lng": 29.0290,
+      "startup_rooms": 5,
+      "support_type": "50%",
+      "support": ["Room (50%)", "Breakfast", "Meeting room"],
+      "sectors": ["FinTech (where legally permitted)", "SaaS"],
+      "metro_min": 6,
+      "exhibition": "Kadıköy tech cluster — 10 min",
+      "meeting_room": true,
+      "coworking": false,
+      "airport_transfer": false,
+      "corporate_sponsorship": false,
+      "sponsor_level": "Startup Partner Hotel"
+    },
+    {
+      "id": "h3",
+      "name": "Hotel C",
+      "city": "Ankara",
+      "district": "Çankaya",
+      "lat": 39.9208,
+      "lng": 32.8541,
+      "startup_rooms": 6,
+      "support_type": "free",
+      "support": ["Room", "Breakfast", "Workspace", "Meeting room"],
+      "sectors": ["IndustrialTech", "ClimateTech", "DeepTech"],
+      "metro_min": 8,
+      "exhibition": "ATO Congresium — 15 min",
+      "meeting_room": true,
+      "coworking": true,
+      "airport_transfer": true,
+      "corporate_sponsorship": true,
+      "sponsor_level": "Official Startup Accommodation Partner"
+    },
+    {
+      "id": "h4",
+      "name": "Hotel D",
+      "city": "Ankara",
+      "district": "Yenimahalle",
+      "lat": 39.9686,
+      "lng": 32.7595,
+      "startup_rooms": 3,
+      "support_type": "corporate",
+      "support": ["Room (corporate-sponsored)", "Meeting room"],
+      "sectors": ["HealthTech", "IndustrialTech"],
+      "metro_min": 12,
+      "exhibition": "OSTIM / Technopark — 8 min",
+      "meeting_room": true,
+      "coworking": false,
+      "airport_transfer": false,
+      "corporate_sponsorship": true,
+      "sponsor_level": "Corporate Sponsored Hotel"
+    }
+  ],
+  "corporate_sponsors": [
+    {
+      "id": "c1",
+      "name": "Turkish Industrial Company (Energy)",
+      "city": "Istanbul",
+      "sector_interest": ["IndustrialTech", "AI", "ClimateTech"],
+      "offers": ["Travel cost", "Accommodation", "Workspace", "PoC", "Service purchase", "Seed capital"],
+      "startup_slots": 2,
+      "status": "in_discussion"
+    },
+    {
+      "id": "c2",
+      "name": "Turkish SaaS Scale-up",
+      "city": "Istanbul",
+      "sector_interest": ["SaaS", "AI", "FinTech (where legally permitted)"],
+      "offers": ["Workspace", "PoC", "Market access", "Commercial contract"],
+      "startup_slots": 3,
+      "status": "confirmed"
+    },
+    {
+      "id": "c3",
+      "name": "Ankara Manufacturing Group",
+      "city": "Ankara",
+      "sector_interest": ["IndustrialTech", "DeepTech"],
+      "offers": ["PoC", "Pilot line", "Investment introduction"],
+      "startup_slots": 1,
+      "status": "in_discussion"
+    }
+  ],
+  "ecosystem_sponsors": [
+    {"id": "e1", "name": "Accelerator (Istanbul)", "type": "accelerator", "offers": ["Mentoring", "Investor meetings", "Office"]},
+    {"id": "e2", "name": "Technopark (Ankara)", "type": "technopark", "offers": ["Office", "R&D incentives info", "Market access"]},
+    {"id": "e3", "name": "University Technology Transfer Office", "type": "university", "offers": ["Mentoring", "Talent", "Lab access"]},
+    {"id": "e4", "name": "VC / Angel Network", "type": "investor", "offers": ["Investor meetings", "Due diligence intro"]},
+    {"id": "e5", "name": "Coworking Space (Istanbul)", "type": "coworking", "offers": ["Desk", "Meeting room", "Community"]},
+    {"id": "e6", "name": "Iranian–Turkish Legal Group", "type": "legal", "offers": ["Legal Landing Desk", "Pre-Landing Assessment", "Corporate & investment legal"]}
+  ],
+  "legal_partners": [
+    {
+      "id": "lp1",
+      "name": "Iranian–Turkish Legal Group",
+      "city": "Istanbul / Ankara",
+      "role": "Strategic Legal Landing Partner — Iran–Türkiye Startup Legal Desk (proposed)",
+      "expertise": [
+        "Iran–Türkiye cross-border matters",
+        "Corporate law",
+        "Company formation",
+        "Commercial contracts",
+        "Immigration / residence pathways",
+        "Employment",
+        "Intellectual property",
+        "Tax coordination",
+        "Investment agreements"
+      ],
+      "layers": ["layer1", "layer2"],
+      "note": "Professional legal activity in Türkiye is regulated by the bar associations; the partnership is structured with lawyers qualified in Türkiye. The platform promises no immigration outcome and gives no legal advice."
+    }
+  ]
+}

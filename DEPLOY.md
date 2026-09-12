@@ -4,6 +4,9 @@
 
 **https://istanbul-startup-from-iran.pages.dev**
 
+Custom domain `startup.exhibition2world.ir` is registered on the project and waiting on one DNS
+record — see [DOMAIN.md](DOMAIN.md) and `./domain-check.sh`.
+
 | What | Where |
 |---|---|
 | Website + AI Navigator widget | `/` |

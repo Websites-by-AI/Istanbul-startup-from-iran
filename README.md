@@ -3,6 +3,10 @@
 **Live: https://istanbul-startup-from-iran.pages.dev** (Cloudflare Pages — site, JSON API, chat
 widget and the Telegram/Discord/WhatsApp webhooks). Deployment details in [`DEPLOY.md`](DEPLOY.md).
 
+**Custom domain:** `startup.exhibition2world.ir` is registered on the Pages project; it goes live as
+soon as one CNAME is added to the zone — see [DOMAIN.md](DOMAIN.md) (`./domain-check.sh` reports the
+exact status).
+
 **From Exhibition → Legal Entry → Turkish Company → Corporate Partnership → Investment**
 
 One shared bot core driving **four channels**: a **Telegram bot**, a **Discord bot**, a **WhatsApp bot**
@@ -141,9 +145,12 @@ web/index.html    website + chat widget (single file, no external assets)
 scripts/          parity_check.mjs — runs the JS core against the same expectations as pytest
 build_static.py   builds public/ (static site + deck files + JSON fallbacks) and functions/_core/data.js
 deploy.sh         build → test → parity → deploy to Cloudflare Pages
+domain-check.sh   custom-domain status + the exact DNS record still needed
 data/hotels.json  seed: hotels, corporate sponsors, ecosystem sponsors, legal partners
 tests/            169 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity
 public/           build artifact (gitignored)
+DEPLOY.md         how it is deployed, secrets, webhook wiring, redeploy
+DOMAIN.md         custom domain startup.exhibition2world.ir — one CNAME away from live
 ```
 
 ## Notes & boundaries

@@ -153,14 +153,19 @@ scripts/          parity_check.mjs (JS core vs pytest expectations) + production
 build_static.py   builds public/ (static site + deck files + JSON fallbacks) and functions/_core/data.js
 deploy.sh         build → test → parity → deploy to Cloudflare Pages
 domain-check.sh   custom-domain status + the exact DNS record still needed
+rag/              knowledge-base scraper: sources, polite fetch/parsers, chunk+dedup pipeline,
+                  and the single Hugging Face naming contract (see RAG.md)
+scripts/setup_telegram.py  trilingual bot profile, command menu, webhook + channel announcement
+scripts/i18n_audit.py      Turkish/Persian coverage audit (site dictionary, bot routes, summaries)
 publish_gh_pages.sh  build public-gh/ and push it to the gh-pages branch (GitHub Pages mirror)
 data/hotels.json  seed: hotels, corporate sponsors, ecosystem sponsors, legal partners
-tests/            171 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity,
-                  plus opt-in live production checks (RUN_LIVE=1)
+tests/            215 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity,
+                  i18n (tr/fa) coverage, RAG pipeline, plus opt-in live production checks (RUN_LIVE=1)
 public/           Cloudflare Pages build artifact (gitignored)
 public-gh/        GitHub Pages mirror build artifact (gitignored)
 DEPLOY.md         how it is deployed, secrets, webhook wiring, redeploy
 DOMAIN.md         custom domain startup.exhibition2world.ir — one CNAME away from live
+RAG.md            RAG + knowledge base: what exists on Hugging Face, the single names, daily scraper
 ```
 
 ## Notes & boundaries

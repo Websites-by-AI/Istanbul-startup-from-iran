@@ -21,6 +21,8 @@ data/sessions.json
 data/startups.json
 data/legal_cases.json
 data/audit.json
+# scraped knowledge base (rebuilt daily by `python3 -m rag.scrape`)
+data/kb/
 *.log
 .DS_Store
 public/

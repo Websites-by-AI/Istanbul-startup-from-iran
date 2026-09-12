@@ -23,3 +23,9 @@ data/legal_cases.json
 data/audit.json
 *.log
 .DS_Store
+public/
+.wrangler/
+.tmp/
+.dev.vars
+.npm/
+package-lock.json

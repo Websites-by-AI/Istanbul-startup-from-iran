@@ -1,5 +1,8 @@
 # Iran → Türkiye · Startup Landing Platform
 
+**Live: https://istanbul-startup-from-iran.pages.dev** (Cloudflare Pages — site, JSON API, chat
+widget and the Telegram/Discord/WhatsApp webhooks). Deployment details in [`DEPLOY.md`](DEPLOY.md).
+
 **From Exhibition → Legal Entry → Turkish Company → Corporate Partnership → Investment**
 
 One shared bot core driving **four channels**: a **Telegram bot**, a **Discord bot**, a **WhatsApp bot**
@@ -31,6 +34,7 @@ pipeline and can continue on another channel.
 ## Quick start
 
 ```bash
+./deploy.sh                            # build + test + deploy to Cloudflare Pages (needs CLOUDFLARE_API_TOKEN)
 pip install -r requirements.txt
 
 # 1) website + API + chat widget (all channels reachable via webhooks)
@@ -129,11 +133,17 @@ See [`PUSH.md`](PUSH.md) for the exact push commands and the per-channel deploym
 ## Repository
 
 ```
-bot/            core, safety, legal_desk, navigator, sponsors, deck, server, run, cli
-bot/channels/   base, simulated, telegram, discord, whatsapp
-web/index.html  website + chat widget (single file, no external assets)
+bot/              core, safety, legal_desk, navigator, sponsors, deck, server, run, cli   (Python service)
+bot/channels/     base, simulated, telegram, discord, whatsapp
+functions/        Cloudflare Pages backend — JS port of the same core (api + webhook routes)
+functions/_core/  core.js, legal_desk.js, navigator.js, safety.js, sponsors.js, deck.js, data.js
+web/index.html    website + chat widget (single file, no external assets)
+scripts/          parity_check.mjs — runs the JS core against the same expectations as pytest
+build_static.py   builds public/ (static site + deck files + JSON fallbacks) and functions/_core/data.js
+deploy.sh         build → test → parity → deploy to Cloudflare Pages
 data/hotels.json  seed: hotels, corporate sponsors, ecosystem sponsors, legal partners
-tests/          155 tests incl. real HTTP server end-to-end
+tests/            169 tests: safety, legal desk, navigator, sponsors, deck, channels, HTTP API, JS parity
+public/           build artifact (gitignored)
 ```
 
 ## Notes & boundaries

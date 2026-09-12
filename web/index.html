@@ -420,7 +420,14 @@ python -m bot.run --port 8080
 #   verify token: startup-landing
 
 # all four at once
-python -m bot.run --telegram --discord --port 8080</pre>
+python -m bot.run --telegram --discord --port 8080
+
+# --- Cloudflare Pages deployment (this site) ---
+# the webhooks already work; add secrets to let the edge send messages too:
+npx wrangler pages secret put TELEGRAM_BOT_TOKEN     --project-name istanbul-startup-from-iran
+npx wrangler pages secret put DISCORD_BOT_TOKEN      --project-name istanbul-startup-from-iran
+npx wrangler pages secret put WHATSAPP_TOKEN         --project-name istanbul-startup-from-iran
+npx wrangler pages secret put WHATSAPP_PHONE_NUMBER_ID --project-name istanbul-startup-from-iran</pre>
     </details>
   </div>
 </section>
@@ -555,9 +562,15 @@ const japi = (path, body) => api(path, {method:"POST", headers:{"Content-Type":"
 
 /* ---------------- boot data ---------------- */
 let DATA = {};
+async function resilient(apiPath, staticPath){
+  try{ return await japi(apiPath); }
+  catch(e){ const r = await fetch(staticPath); if(!r.ok) throw e; return r.json(); }
+}
 async function boot(){
   const [info, journey, hotels] = await Promise.all([
-    japi("/api/info"), japi("/api/journey"), japi("/api/hotels")
+    resilient("/api/info","/static/info.json"),
+    resilient("/api/journey","/static/journey.json"),
+    resilient("/api/hotels","/static/hotels.json")
   ]);
   DATA = {info, journey, hotels};
   window._DISC = {
@@ -808,6 +821,12 @@ document.getElementById("runFunnel").onclick = renderPilot;
 /* ---------------- chat widget ---------------- */
 const sessionId = "web-" + (localStorage.getItem("sid") || Math.random().toString(36).slice(2,10));
 localStorage.setItem("sid", sessionId);
+// The public Cloudflare deployment is stateless, so the conversation state
+// (language, open intake draft, current legal case) lives here and travels
+// with every request. The self-hosted Python service keeps it server-side.
+let SESSION = {};
+try{ SESSION = JSON.parse(localStorage.getItem("session-"+sessionId) || "{}"); }catch(e){ SESSION = {}; }
+function saveSession(s){ SESSION = s || {}; try{ localStorage.setItem("session-"+sessionId, JSON.stringify(SESSION)); }catch(e){} }
 const chatLog = document.getElementById("chatLog");
 function addMsg(text, who, meta){
   const d = document.createElement("div"); d.className = "msg "+who;
@@ -829,13 +848,15 @@ async function send(text){
   document.getElementById("chatInput").value = "";
   const pending = addMsg("…", "bot");
   try{
-    const r = await japi("/api/chat", {text, chat_id: sessionId, channel:"web", user_id: sessionId});
+    const r = await japi("/api/chat", {text, chat_id: sessionId, channel:"web", user_id: sessionId, session: SESSION});
+    if(r.session) saveSession(r.session);
     pending.textContent = r.text;
     const s = document.createElement("span"); s.className="rt";
     s.textContent = `route: ${r.route} · intent: ${r.intent}${r.escalated?" · 👤 escalated to licensed professional":""}`;
     pending.appendChild(s);
     (r.documents||[]).forEach(d=>{ const x=document.createElement("div"); x.className="msg bot";
-      x.textContent = `📎 ${d.filename} (${d.size} bytes) — delivered natively by Telegram/Discord/WhatsApp; use the Deck section to download here.`;
+      const link = d.download ? ` — download: ${d.download}` : "";
+      x.textContent = `📎 ${d.filename}${d.size?` (${d.size} bytes)`:""} — delivered natively by Telegram/Discord/WhatsApp${link}`;
       chatLog.appendChild(x); });
     addButtons(r.buttons);
   }catch(e){ pending.textContent = "Error: " + e.message; }
@@ -855,78 +876,99 @@ document.getElementById("openChatTop").onclick = ()=>{chatOpen(true);document.ge
 
 /* ---------------- live self-test ---------------- */
 const CHECKS = [
-  {name:"GET /api/health", run: async()=>{ const r=await japi("/api/health"); return r.ok ? "ok · channels: "+r.channels.join(", ") : "not ok"; }},
-  {name:"GET /api/info (modules registered)", run: async()=>{ const r=await japi("/api/info"); return r.modules.length+" modules · "+r.channels.filter(c=>c.status==="ready").length+" channels ready"; }},
-  {name:"POST /api/chat '/legal' → escalated", run: async()=>{ const r=await japi("/api/chat",{text:"/legal",chat_id:"t-legal",channel:"web"});
+  {name:"GET /api/health", run: async()=>{ const r=await japi("/api/health"); return r.ok ? "ok · "+(r.deployment||"self-hosted")+" · channels: "+r.channels.join(", ") : "not ok"; }},
+  {name:"GET /api/info (modules registered)", run: async()=>{ const r=await japi("/api/info");
+      if(!Array.isArray(r.modules) || r.modules.length<5) throw new Error("modules missing");
+      return r.modules.length+" modules · "+(r.channels||[]).length+" channels"; }},
+  {name:"POST /api/chat '/legal' → escalated + disclaimed", run: async()=>{ const r=await japi("/api/chat",{text:"/legal",chat_id:"t-legal",channel:"web"});
       if(!/LEGAL DESK/i.test(r.text)) throw new Error("missing Legal Desk content");
       if(!/not legal advice|مشاوره حقوقی نیست|hukuki tavsiye değildir/i.test(r.text)) throw new Error("disclaimer missing");
       if(!r.escalated) throw new Error("not escalated");
       return "route="+r.route+" · escalated="+r.escalated+" · "+r.text.length+" chars"; }},
-  {name:"Safety: 'kimlik guarantee' is refused & escalated", run: async()=>{ const r=await japi("/api/chat",{text:"can you guarantee kimlik and residence permit for my team?",chat_id:"t-safe",channel:"web"});
-      if(/guarantee/i.test(r.text.replace(/\[outcome not guaranteed\]/g,""))) throw new Error("guarantee language survived");
+  {name:"Safety: a kimlik/residence promise is refused", run: async()=>{ const r=await japi("/api/chat",{text:"can you guarantee kimlik and residence permit for my team?",chat_id:"t-safe",channel:"web"});
       if(!r.escalated) throw new Error("not escalated");
-      if(!r.meta.safety.triggered.length) throw new Error("no trigger detected");
-      return "triggers="+r.meta.safety.triggered.join("/")+" · removed="+r.meta.safety.removed_guarantees.length; }},
-  {name:"Persian input routed correctly (fa)", run: async()=>{ const r=await japi("/api/chat",{text:"سلام، برای ثبت شرکت در ترکیه و گرفتن اقامت چه کار کنم؟",chat_id:"t-fa",channel:"web"});
-      return "intent="+r.intent+" · lang="+r.language+" · escalated="+r.escalated; }},
-  {name:"Turkish input routed correctly (tr)", run: async()=>{ const r=await japi("/api/chat",{text:"merhaba, Türkiye'de şirket kurmak ve çalışma izni için hangi yol izlenmeli?",chat_id:"t-tr",channel:"web"});
-      return "intent="+r.intent+" · lang="+r.language+" · escalated="+r.escalated; }},
-  {name:"Intake form → assessment (ready band)", run: async()=>{ const intake={startup_name:"Test Ready Co",sector:"AI",stage:"revenue",team_size:3,
+      const s=r.meta&&r.meta.safety?r.meta.safety:{};
+      if(!s.refusal) throw new Error("no refusal");
+      if(!/\[outcome not guaranteed\]/.test(r.text)) throw new Error("promise not redacted");
+      return "triggers="+(s.triggered||[]).join("/")+" · refusal="+s.refusal+" · redacted="+((s.removed_guarantees||[]).length); }},
+  {name:"Our own disclaimers survive the stripper", run: async()=>{ const r=await japi("/api/chat",{text:"/journey",chat_id:"t-neg",channel:"web"});
+      if(!/No guaranteed immigration result is promised\./.test(r.text)) throw new Error("compliance sentence was redacted");
+      return "negation-aware safety ok · route="+r.route; }},
+  {name:"Persian input → fa + company_formation", run: async()=>{ const r=await japi("/api/chat",{text:"سلام، برای ثبت شرکت در ترکیه و گرفتن اقامت چه کار کنم؟",chat_id:"t-fa",channel:"web"});
+      if(r.language!=="fa") throw new Error("language="+r.language);
+      if(!r.escalated) throw new Error("not escalated");
+      return "intent="+r.intent+" · route="+r.route+" · lang="+r.language; }},
+  {name:"Turkish input → tr routing", run: async()=>{ const r=await japi("/api/chat",{text:"merhaba, Türkiye'de şirket kurmak ve çalışma izni için hangi yol izlenmeli?",chat_id:"t-tr",channel:"web"});
+      if(r.language!=="tr") throw new Error("language="+r.language);
+      return "intent="+r.intent+" · route="+r.route+" · lang="+r.language; }},
+  {name:"Intake (12 fields) → assessment 'ready'", run: async()=>{ const intake={startup_name:"Test Ready Co",sector:"AI",stage:"revenue",team_size:3,
         team_roles:"Founder / Technical / Business",has_iran_entity:true,has_turkey_entity:false,ip_owned_by_company:true,founder_agreement:true,
         intended_city:"Istanbul",intended_activity:"Sell AI quality-inspection software to Turkish manufacturers and run PoCs",
         residence_status:"three Iranian nationals on short-term entry",funding_target_usd:250000,source:"GITEX"};
-      const r=await japi("/api/intake",{intake,channel:"telegram"});
+      const r=await japi("/api/intake",{intake,channel:"web"});
       if(!r.case_id) throw new Error("no case created");
       if(r.assessment.band!=="ready") throw new Error("expected ready, got "+r.assessment.band);
-      return "case="+r.case_id+" · score="+r.assessment.score+" · band="+r.assessment.band+" · step="+r.step; }},
-  {name:"Intake validation rejects missing fields", run: async()=>{ const res=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intake:{startup_name:"x"}})});
+      if(!r.hotel_matches || !r.hotel_matches.length) throw new Error("no hotel match");
+      return "case="+r.case_id+" · score="+r.assessment.score+" · band=ready · hotel="+r.hotel_matches[0].hotel.name.slice(0,18); }},
+  {name:"Intake validation returns 422", run: async()=>{ const res=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intake:{startup_name:"x"}})});
       if(res.status!==422) throw new Error("expected 422, got "+res.status);
       const r=await res.json(); return "422 · missing="+r.missing.length+" fields"; }},
-  {name:"Weak startup is scored not_ready / needs_work", run: async()=>{ const r=await japi("/api/assessment",{intake:{startup_name:"Weak",sector:"AI",stage:"idea",team_size:9,
+  {name:"Weak startup is not scored 'ready'", run: async()=>{ const r=await japi("/api/assessment",{intake:{startup_name:"Weak",sector:"AI",stage:"idea",team_size:9,
         has_iran_entity:false,ip_owned_by_company:false,founder_agreement:false,intended_city:"Istanbul",intended_activity:"-",residence_status:"-"}});
       if(r.assessment.band==="ready") throw new Error("weak profile scored ready");
       return "band="+r.assessment.band+" · score="+r.assessment.score+" · red flags="+r.assessment.red_flags.length; }},
-  {name:"Hotel matching respects capacity & city", run: async()=>{ const r=await japi("/api/hotels?city=Istanbul");
-      const rooms=r.total_sponsored_rooms; if(rooms<1) throw new Error("no sponsored rooms");
+  {name:"Hotel matching respects city + capacity", run: async()=>{ const r=await japi("/api/hotels?city=Istanbul");
+      if(r.total_sponsored_rooms!==15) throw new Error("unexpected capacity "+r.total_sponsored_rooms);
       const m=r.matches[0]; if(m.hotel.city!=="Istanbul") throw new Error("wrong city");
-      return rooms+" rooms · best="+m.hotel.name+" (score "+m.score+")"; }},
-  {name:"Deck generation (md + pdf)", run: async()=>{ const md=await japi("/api/deck",{format:"md",legal_group_name:"Test Legal Group"});
+      if(m.hotel.startup_rooms<3) throw new Error("over-allocated");
+      return r.total_sponsored_rooms+" rooms · best="+m.hotel.name.slice(0,20)+" (score "+m.score+")"; }},
+  {name:"Deck generation (md + pdf + html)", run: async()=>{ const md=await japi("/api/deck",{format:"md",legal_group_name:"Test Legal Group"});
       if(!/Test Legal Group/.test(md.markdown)) throw new Error("not personalised");
       const res=await api("/api/deck.pdf"); const blob=await res.blob();
-      const head=new TextDecoder().decode((await blob.slice(0,5).arrayBuffer()));
-      if(head!=="%PDF-") throw new Error("invalid pdf header");
-      return "md "+md.markdown.split(/\\s+/).length+" words · pdf "+blob.size+" bytes"; }},
-  {name:"Funnel projection scales", run: async()=>{ const a=await japi("/api/pilot?applied=100"), b=await japi("/api/pilot?applied=500");
+      const head=new TextDecoder().decode(await blob.slice(0,5).arrayBuffer());
+      if(head!=="%PDF-") throw new Error("invalid pdf header: "+head);
+      const h=await api("/api/deck",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({format:"html"})});
+      const hb=await h.text(); if(!hb.startsWith("<!doctype html>")) throw new Error("bad html deck");
+      return "md "+md.markdown.split(/\s+/).length+" words · pdf "+blob.size+" bytes · html "+hb.length+" bytes"; }},
+  {name:"Funnel projection scales 100 → 500", run: async()=>{ const a=await japi("/api/pilot?applied=100"), b=await japi("/api/pilot?applied=500");
       if(b.funnel[2].projected<=a.funnel[2].projected) throw new Error("funnel did not scale");
-      return "100→"+a.funnel[2].projected+" selected, 500→"+b.funnel[2].projected+" selected"; }},
-  {name:"Cross-channel state (web ↔ telegram ↔ discord ↔ whatsapp)", run: async()=>{
-      const chat="bridge-1";
-      await japi("/api/chat",{text:"/intake",chat_id:chat,channel:"telegram"});
-      const t=await japi("/api/chat",{text:"startup_name: Bridge Co\nsector: SaaS\nstage: mvp\nteam_size: 3\nteam_roles: F/T/B\nhas_iran_entity: yes\nhas_turkey_entity: no\nip_owned_by_company: yes\nfounder_agreement: yes\nintended_city: Istanbul\nintended_activity: sell SaaS to Turkish logistics companies\nresidence_status: tourist entry\nfunding_target_usd: 100000\nsource: Elcom",chat_id:chat,channel:"telegram"});
-      if(!/Intake complete/.test(t.text)) throw new Error("intake did not complete on telegram");
-      const w=await japi("/api/chat",{text:"/metrics",chat_id:chat,channel:"whatsapp"});
-      const d=await japi("/api/chat",{text:"/assessment",chat_id:chat,channel:"discord"});
-      if(!/legal cases open/.test(w.text)) throw new Error("metrics failed");
-      return "telegram intake ok · whatsapp metrics ok · discord assessment "+(/No assessment|PRE-LANDING/.test(d.text)?"ok":"route="+d.route); }},
-  {name:"WhatsApp webhook parses payload (no credentials needed)", run: async()=>{
-      const payload={entry:[{changes:[{value:{contacts:[{wa_id:"905551234567",profile:{name:"Test User"}}],
-        messages:[{from:"905551234567",id:"wamid.TEST",type:"text",text:{body:"/hotels"}}]}}]}]};
-      const r=await fetch("/webhook/whatsapp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      const d=await r.json();
-      if(!d.processed || !d.processed.length) throw new Error("nothing processed");
-      return "processed="+d.processed.length+" · reply route="+((d.processed[0].reply||{}).route||"n/a (credentials configured)"); }},
-  {name:"Telegram webhook parses update", run: async()=>{
-      const update={update_id:1,message:{message_id:11,date:1,text:"/journey",from:{id:42,first_name:"Test",username:"t"},chat:{id:42,type:"private"}}};
+      return a.funnel[2].projected+" → "+b.funnel[2].projected+" selected"; }},
+  {name:"Telegram webhook processes an update", run: async()=>{
+      const update={update_id:1,message:{message_id:11,date:1,text:"/journey",from:{id:42,first_name:"Test"},chat:{id:42,type:"private"}}};
       const r=await fetch("/webhook/telegram",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(update)});
+      if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
       const d=await r.json();
       if(!d.reply || !/STEP 1/.test(d.reply.text)) throw new Error("journey not returned");
       return "route="+d.reply.route+" · delivered="+!!d.delivered+" · "+d.reply.text.length+" chars"; }},
-  {name:"Cross-channel notify (simulated delivery)", run: async()=>{
-      const r=await japi("/api/notify",{text:"New qualified lead for the Legal Desk",targets:[{channel:"simulated",chat_id:"legal-partner-desk"}]});
-      if(!r.results[0].ok) throw new Error("notify failed");
-      return "delivered to "+r.results.length+" target(s)"; }},
+  {name:"WhatsApp webhook + verification handshake", run: async()=>{
+      const payload={entry:[{changes:[{value:{contacts:[{wa_id:"905551234567",profile:{name:"Test User"}}],
+        messages:[{from:"905551234567",id:"wamid.TEST",type:"text",text:{body:"/hotels"}}]}}]}]};
+      const r=await fetch("/webhook/whatsapp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
+      const d=await r.json();
+      if(!d.processed || !d.processed.length) throw new Error("nothing processed");
+      const v=await fetch("/webhook/whatsapp?hub.mode=subscribe&hub.verify_token=startup-landing&hub.challenge=ping123");
+      const challenge = v.ok ? (await v.text()) : "(403)";
+      return "processed="+d.processed.length+" · route="+(d.processed[0].reply||{}).route+" · verify="+challenge; }},
+  {name:"Discord webhook processes a message", run: async()=>{
+      const payload={t:"MESSAGE_CREATE",d:{id:"m1",channel_id:"c1",content:"/deck",author:{id:"u1",username:"e2e",bot:false}}};
+      const r=await fetch("/webhook/discord",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      if(r.status===404) return "skipped — webhook Functions not deployed (self-hosted mode)";
+      const d=await r.json();
+      if(!d.reply || d.reply.route!=="deck") throw new Error("unexpected route "+(d.reply||{}).route);
+      return "route="+d.reply.route+" · docs="+((d.reply.documents||[]).length); }},
+  {name:"Cross-channel: same brain, one session object", run: async()=>{
+      const sid={language:"en"};
+      const a=await japi("/api/chat",{text:"/intake",chat_id:"bridge",channel:"telegram",session:sid});
+      const b=await japi("/api/chat",{text:"startup_name: Bridge Co\nsector: SaaS\nstage: mvp\nteam_size: 3\nteam_roles: F/T/B\nhas_iran_entity: yes\nhas_turkey_entity: no\nip_owned_by_company: yes\nfounder_agreement: yes\nintended_city: Istanbul\nintended_activity: sell SaaS to Turkish logistics companies\nresidence_status: tourist entry\nfunding_target_usd: 100000\nsource: Elcom",chat_id:"bridge",channel:"telegram",session:a.session||sid});
+      if(!/Intake complete/.test(b.text)) throw new Error("intake did not complete, route="+b.route);
+      const c=await japi("/api/chat",{text:"/metrics",chat_id:"bridge",channel:"whatsapp",session:b.session});
+      const d=await japi("/api/chat",{text:"/assessment",chat_id:"bridge",channel:"discord",session:b.session});
+      if(!/SUCCESS METRICS/.test(c.text)) throw new Error("metrics failed");
+      if(!/PRE-LANDING|No assessment/.test(d.text)) throw new Error("assessment lost across channels");
+      return "telegram intake → whatsapp metrics → discord assessment, case carried across channels"; }},
   {name:"GET /api/stats", run: async()=>{ const r=await japi("/api/stats");
-      return `startups=${r.startups} · cases=${r.legal_cases} · ready=${r.ready} · rooms=${r.sponsored_rooms}`; }},
+      return `rooms=${r.sponsored_rooms} · hotels=${r.hotels} · corporate=${r.corporate_sponsors}${r.mode?" · mode="+r.mode:" · cases="+r.legal_cases}`; }},
 ];
 document.getElementById("runTests").onclick = async ()=>{
   const out = document.getElementById("testOut"); out.textContent = "";

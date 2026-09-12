@@ -128,6 +128,9 @@ def top_intent(text: str) -> str:
             "pdf": "deck", "pilot": "pilot", "human": "human", "help": "help", "menu": "help",
             "invest": "investment", "investment": "investment", "ip": "ip", "kimlik": "residence",
             "visa": "residence", "residence": "residence", "company": "company_formation",
+            "corporate": "corporate_sponsor", "sponsor": "corporate_sponsor",
+            "metrics": "metrics", "advance": "advance", "ecosystem": "ecosystem",
+            "lang": "lang", "language": "lang", "sponsors": "corporate_sponsor",
         }
         if cmd in aliases:
             return aliases[cmd]

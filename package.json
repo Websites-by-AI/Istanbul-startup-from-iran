@@ -1,0 +1,16 @@
+{
+  "name": "istanbul-startup-from-iran",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Iran → Türkiye Startup Landing Platform — website, JSON API and the Telegram/Discord/WhatsApp bots (Cloudflare Pages backend). The full-featured Python service lives in bot/.",
+  "scripts": {
+    "build": "python3 build_static.py",
+    "test": "python3 -m pytest -q && node scripts/parity_check.mjs",
+    "parity": "node scripts/parity_check.mjs",
+    "deploy": "./deploy.sh",
+    "serve": "python3 -m bot.run --port 8080"
+  },
+  "devDependencies": {
+    "wrangler": "^4.86.0"
+  }
+}

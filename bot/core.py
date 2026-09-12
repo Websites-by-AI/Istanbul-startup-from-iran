@@ -149,6 +149,8 @@ class Bot:
             "journey": self.h_journey,
             "metrics": self.h_metrics,
             "human": self.h_human,
+            "lang": self.h_lang,
+            "advance": self.h_advance,
             "unknown": self.h_unknown,
         }
         self.on_reply: list[Callable[[Message, Reply], None]] = []   # observability hooks
@@ -647,6 +649,22 @@ class Bot:
             ]
         )
         return Reply(text=text, route="human", escalated=True, advice_scope=True)
+
+    def h_advance(self, m: Message, s: dict[str, Any]) -> Reply:
+        return self.advance_case(m.session_key)
+
+    def h_lang(self, m: Message, s: dict[str, Any]) -> Reply:
+        names = {"en": "English", "fa": "فارسی (Persian)", "tr": "Türkçe (Turkish)"}
+        text = "\n".join(
+            [
+                f"Answer language: {names.get(s['language'], s['language'])}",
+                "",
+                "Send /lang en, /lang fa or /lang tr at any time.",
+                "زبان پاسخ: فارسی — /lang en یا /lang tr برای تغییر.",
+                "Yanıt dili: Türkçe — /lang en veya /lang fa ile değiştirebilirsiniz.",
+            ]
+        )
+        return Reply(text=text, route="lang")
 
     def h_unknown(self, m: Message, s: dict[str, Any]) -> Reply:
         return Reply(

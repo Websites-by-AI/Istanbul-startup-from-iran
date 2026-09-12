@@ -1,0 +1,139 @@
+{
+  "fields": [
+    {
+      "key": "startup_name",
+      "label": "Startup name",
+      "fa": "نام استارتاپ",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "sector",
+      "label": "Sector",
+      "fa": "حوزه فعالیت",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "AI",
+        "SaaS",
+        "FinTech (where legally permitted)",
+        "HealthTech",
+        "ClimateTech",
+        "IndustrialTech",
+        "DeepTech",
+        "Other"
+      ]
+    },
+    {
+      "key": "stage",
+      "label": "Funding / product stage",
+      "fa": "مرحله",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "idea",
+        "mvp",
+        "revenue",
+        "scaling"
+      ]
+    },
+    {
+      "key": "team_size",
+      "label": "Team size travelling (standard = 3)",
+      "fa": "تعداد اعضای تیم",
+      "type": "int",
+      "required": true
+    },
+    {
+      "key": "team_roles",
+      "label": "Roles (Founder / Technical / Business)",
+      "fa": "نقش‌ها",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "has_iran_entity",
+      "label": "Existing company in Iran?",
+      "fa": "شرکت ثبت‌شده در ایران؟",
+      "type": "bool",
+      "required": true
+    },
+    {
+      "key": "has_turkey_entity",
+      "label": "Existing company/entity in Türkiye?",
+      "fa": "شرکت ثبت‌شده در ترکیه؟",
+      "type": "bool",
+      "required": true
+    },
+    {
+      "key": "ip_owned_by_company",
+      "label": "Is the IP owned by the company (not individuals)?",
+      "fa": "مالکیت فکری به نام شرکت است؟",
+      "type": "bool",
+      "required": true
+    },
+    {
+      "key": "founder_agreement",
+      "label": "Written founder / shareholders agreement in place?",
+      "fa": "قرارداد کتبی بین بنیان‌گذاران؟",
+      "type": "bool",
+      "required": true
+    },
+    {
+      "key": "intended_city",
+      "label": "Target city",
+      "fa": "شهر هدف",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "Istanbul",
+        "Ankara",
+        "İzmir",
+        "Antalya",
+        "Other"
+      ]
+    },
+    {
+      "key": "intended_activity",
+      "label": "Intended activity in Türkiye",
+      "fa": "فعالیت مورد نظر در ترکیه",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "residence_status",
+      "label": "Current residence / visa status of each member",
+      "fa": "وضعیت اقامت/ویزای هر عضو",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "funding_target_usd",
+      "label": "Funding target (USD)",
+      "fa": "هدف جذب سرمایه (دلار)",
+      "type": "int",
+      "required": false
+    },
+    {
+      "key": "source",
+      "label": "Where we met (Elcom / GITEX / university / accelerator / community)",
+      "fa": "نقطه آشنایی",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "required": [
+    "startup_name",
+    "sector",
+    "stage",
+    "team_size",
+    "team_roles",
+    "has_iran_entity",
+    "has_turkey_entity",
+    "ip_owned_by_company",
+    "founder_agreement",
+    "intended_city",
+    "intended_activity",
+    "residence_status"
+  ]
+}

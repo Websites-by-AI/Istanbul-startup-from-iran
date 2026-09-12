@@ -1,0 +1,56 @@
+{
+  "platform": "Türkiye Startup Landing Platform",
+  "program": "Iran → Türkiye Startup Bridge",
+  "deployment": "Cloudflare Pages (static + Functions)",
+  "channels": [
+    {
+      "channel": "web",
+      "status": "ready",
+      "transport": "HTTP /api/chat (website widget)"
+    },
+    {
+      "channel": "simulated",
+      "status": "ready",
+      "transport": "in-process (tests + CLI demo)"
+    },
+    {
+      "channel": "telegram",
+      "status": "needs TELEGRAM_BOT_TOKEN",
+      "transport": "long polling getUpdates / sendMessage"
+    },
+    {
+      "channel": "discord",
+      "status": "needs DISCORD_BOT_TOKEN",
+      "transport": "gateway websocket + REST channels/messages"
+    },
+    {
+      "channel": "whatsapp",
+      "status": "needs WHATSAPP_TOKEN + PHONE_NUMBER_ID",
+      "transport": "Cloud API webhook /messages"
+    }
+  ],
+  "modules": [
+    "Legal Landing Desk (Iran–Türkiye Startup Legal Desk)",
+    "Startup Legal Intake Form",
+    "Pre-Landing Legal Assessment",
+    "Two-Layer Legal Model",
+    "Sponsor model (hospitality / corporate / ecosystem)",
+    "Istanbul Startup Hotel Map",
+    "Corporate Startup Sponsorship + PoC flow",
+    "AI Startup Navigator with Legal AI Safety Principle",
+    "Pitch-deck generator for legal partners (MD/HTML/PDF)"
+  ],
+  "commands": [
+    "/legal",
+    "/intake",
+    "/assessment",
+    "/journey",
+    "/hotels",
+    "/corporate",
+    "/deck",
+    "/pilot",
+    "/metrics",
+    "/human",
+    "/lang en|fa|tr"
+  ]
+}

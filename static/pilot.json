@@ -1,0 +1,89 @@
+{
+  "pilot": {
+    "city": "Istanbul",
+    "teams": 10,
+    "team_size": 3,
+    "people": 30,
+    "ecosystem": [
+      "Hotels",
+      "Turkish corporations",
+      "Lawyers",
+      "Investors",
+      "Accelerators",
+      "Technology parks"
+    ]
+  },
+  "applied": 100,
+  "funnel": [
+    {
+      "stage": "100+ startups",
+      "pilot": 100,
+      "projected": 100
+    },
+    {
+      "stage": "30–50 screened",
+      "pilot": 40,
+      "projected": 40
+    },
+    {
+      "stage": "10 selected",
+      "pilot": 10,
+      "projected": 10
+    },
+    {
+      "stage": "10 legal assessments",
+      "pilot": 10,
+      "projected": 10
+    },
+    {
+      "stage": "10 Türkiye landing plans",
+      "pilot": 10,
+      "projected": 10
+    },
+    {
+      "stage": "Corporate matching",
+      "pilot": 6,
+      "projected": 6
+    },
+    {
+      "stage": "PoCs",
+      "pilot": 3,
+      "projected": 3
+    },
+    {
+      "stage": "Investment / commercial partnerships",
+      "pilot": 2,
+      "projected": 2
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "Startup teams",
+      "target": 10
+    },
+    {
+      "metric": "Founders / team members",
+      "target": 30
+    },
+    {
+      "metric": "Legal assessments",
+      "target": 10
+    },
+    {
+      "metric": "Corporate introductions",
+      "target": "5+"
+    },
+    {
+      "metric": "PoC opportunities",
+      "target": "3+"
+    },
+    {
+      "metric": "Investment / commercial opportunities",
+      "target": "1–3"
+    },
+    {
+      "metric": "Repeatable legal landing framework",
+      "target": 1
+    }
+  ]
+}

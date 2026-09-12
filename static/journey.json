@@ -1,0 +1,127 @@
+{
+  "journey": [
+    {
+      "step": 1,
+      "title": "Selection",
+      "fa": "انتخاب تیم",
+      "owner": "Platform",
+      "channels": [
+        "Elcom",
+        "GITEX",
+        "Startup competitions",
+        "Universities",
+        "Accelerators",
+        "Startup communities"
+      ],
+      "output": "Selected 3-person team (Founder / Technical / Business)"
+    },
+    {
+      "step": 2,
+      "title": "Pre-Landing Legal Assessment",
+      "fa": "ارزیابی حقوقی پیش از ورود",
+      "owner": "Legal Partner",
+      "channels": [
+        "Founder structure",
+        "Current company",
+        "IP ownership",
+        "Contracts",
+        "Team members",
+        "Intended activities in Türkiye",
+        "Possible legal structures"
+      ],
+      "output": "Assessment report + document checklist"
+    },
+    {
+      "step": 3,
+      "title": "Türkiye Entry",
+      "fa": "ورود به ترکیه",
+      "owner": "Legal Partner + Platform",
+      "channels": [
+        "Visa",
+        "Residence",
+        "Work authorization",
+        "Company formation"
+      ],
+      "output": "Applicable pathways explained by the lawyer. No guaranteed immigration result.",
+      "no_guarantee": true
+    },
+    {
+      "step": 4,
+      "title": "Turkish Business Structure",
+      "fa": "ساختار کسب‌وکار ترکیه",
+      "owner": "Legal Partner + Accountant",
+      "channels": [
+        "Turkish subsidiary",
+        "Turkish company",
+        "Branch / representative structure where appropriate",
+        "Other legally suitable structure"
+      ],
+      "output": "Structure decision signed off by the licensed lawyer"
+    },
+    {
+      "step": 5,
+      "title": "Commercial Launch",
+      "fa": "شروع تجاری",
+      "owner": "Legal Partner",
+      "channels": [
+        "Corporate contracts",
+        "Partnership agreements",
+        "Employment arrangements",
+        "IP protection",
+        "Commercial compliance"
+      ],
+      "output": "PoC contract / commercial contract in place"
+    },
+    {
+      "step": 6,
+      "title": "Investment",
+      "fa": "سرمایه‌گذاری",
+      "owner": "Legal & Investment Team",
+      "channels": [
+        "Investment",
+        "Shareholding",
+        "Founder arrangements",
+        "Due diligence",
+        "Commercial partnerships"
+      ],
+      "output": "Term sheet, SHA and investment documentation"
+    }
+  ],
+  "layers": {
+    "layer1": {
+      "name": "Market Entry Legal",
+      "fa": "حقوق ورود به بازار",
+      "when": "Before the startup arrives",
+      "items": [
+        "Immigration",
+        "Company",
+        "IP",
+        "Contracts",
+        "Compliance",
+        "Founder structure"
+      ],
+      "steps": [
+        2,
+        3,
+        4
+      ]
+    },
+    "layer2": {
+      "name": "Investment & Growth Legal",
+      "fa": "حقوق سرمایه‌گذاری و رشد",
+      "when": "After landing",
+      "items": [
+        "Corporate agreements",
+        "PoC contracts",
+        "Investment documentation",
+        "Shareholder agreements",
+        "Due diligence",
+        "Strategic partnerships"
+      ],
+      "steps": [
+        5,
+        6
+      ]
+    }
+  }
+}

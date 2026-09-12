@@ -1,0 +1,9 @@
+{
+  "mode": "stateless-edge",
+  "startups": 0,
+  "legal_cases": 0,
+  "sponsored_rooms": 24,
+  "hotels": 4,
+  "corporate_sponsors": 3,
+  "note": "Pipeline counters live in the self-hosted Python service (GET /api/stats)."
+}

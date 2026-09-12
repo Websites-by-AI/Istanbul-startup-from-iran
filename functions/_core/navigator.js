@@ -22,6 +22,21 @@ export const INTENTS = {
   human: ["human", "talk to a person", "agent", "انسان", "کارشناس", "تماس", "gerçek kişi", "insan", "call me"],
 };
 
+// Extra Turkish / Persian natural-language phrases (mirror of bot/navigator.py)
+export const INTENT_PHRASES = {
+  assessment: ["ön değerlendirme", "on degerlendirme", "iniş öncesi", "inis oncesi", "hukuki değerlendirme", "hukuki degerlendirme", "ارزیابی پیش از ورود", "ارزیابی حقوقی", "سنجش آمادگی"],
+  journey: ["adımlı yolculuk", "adimli yolculuk", "iniş yolculuğu", "inis yolculugu", "yolculuğu göster", "6 adım", "altı adım", "adımlı iniş", "مسیر شش مرحله", "مسیر ورود", "مراحل ورود"],
+  hotel: ["otel haritası", "otel haritasi", "sponsorlu oda", "sponsorlu odalar", "odalar", "اتاق های اسپانسری", "نقشه هتل ها"],
+  ecosystem: ["ekosistem sponsoru", "ekosistem sponsorları", "ekosistem ortakları", "اسپانسرهای اکوسیستم", "اکوسیستم"],
+  deck: ["sunum hazırla", "sunum oluştur", "hukuk bürosu sunumu", "hukuk bürosu için sunum", "ارائه بساز", "دک بساز", "برای گروه حقوقی ارائه", "sunum hazırlar"],
+  human: ["avukata aktar", "lisanslı avukat", "lisansli avukat", "gerçek kişiye aktar", "insana aktar", "وکیل دارای پروانه", "ارجاع به وکیل", "به وکیل ارجاع", "ارجاع بده"],
+  corporate_sponsor: ["sponsor modelleri", "kurumsal sponsorluk", "اسپانسرشیپ شرکتی"],
+};
+for (const [intent, phrases] of Object.entries(INTENT_PHRASES)) {
+  const have = INTENTS[intent] || (INTENTS[intent] = []);
+  have.push(...phrases.filter((p) => !have.includes(p)));
+}
+
 export const SENSITIVE_INTENTS = new Set(["residence", "legal_desk", "company_formation", "investment", "ip"]);
 
 export const MENU = [

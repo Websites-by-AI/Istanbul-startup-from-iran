@@ -14,6 +14,7 @@ import {
   sp,
   safe,
 } from "../_core/core.js";
+import { sendTelegramText } from "../_core/telegram.js";
 
 export const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -52,7 +53,7 @@ function deckOptionsFrom(body = {}, query = {}) {
 }
 
 export async function onRequest(context) {
-  const { request, next } = context;
+  const { request, next, env } = context;
   const url = new URL(request.url);
   const query = url.searchParams;
   const path = "/" + (context.params?.path || []).join("/");
@@ -61,7 +62,7 @@ export async function onRequest(context) {
 
   try {
     if (request.method === "GET") return await onGet(path, query, request, next);
-    if (request.method === "POST") return await onPost(path, request);
+    if (request.method === "POST") return await onPost(path, request, env || {});
     return json({ error: "method not allowed", path }, 405);
   } catch (err) {
     return json({ error: "internal error", detail: String(err && err.message ? err.message : err), path }, 500);
@@ -188,7 +189,7 @@ async function tryStatic(request, p) {
   return null;
 }
 
-async function onPost(path, request) {
+async function onPost(path, request, env = {}) {
   if (path === "/chat") {
     const body = await readJson(request);
     const textIn = String(body.text || "");
@@ -273,16 +274,43 @@ async function onPost(path, request) {
   if (path === "/notify") {
     const body = await readJson(request);
     const targets = Array.isArray(body.targets) ? body.targets : [];
-    if (!String(body.text || "").trim() || !targets.length) return json({ error: "text and targets[] are required" }, 400);
-    // The public edge deployment has no bot credentials; forwarding is done by the
-    // self-hosted service. We report exactly that instead of pretending.
-    return json({
-      results: targets.map((t) => ({
-        channel: t.channel,
-        ok: false,
-        error: "channel credentials are not configured on the public edge deployment — run bot/run.py with tokens to deliver",
-      })),
-    });
+    const note = String(body.text || "").trim();
+    if (!note || !targets.length) return json({ error: "text and targets[] are required" }, 400);
+    // Real delivery happens here when the channel credentials are set as Pages
+    // secrets; otherwise we say so instead of pretending (the self-hosted Python
+    // service delivers through bot/channels/*).
+    const results = [];
+    for (const t of targets) {
+      const channel = String(t.channel || "").toLowerCase();
+      const to = String(t.chat_id || t.to || "");
+      if (channel === "telegram") {
+        const d = await sendTelegramText(env, to, note);
+        results.push({ channel, to, ok: d.ok, message_id: d.message_id || "", error: d.error || "" });
+      } else if (channel === "whatsapp" && env.WHATSAPP_TOKEN && env.WHATSAPP_PHONE_NUMBER_ID) {
+        try {
+          const r = await fetch(
+            `https://graph.facebook.com/${env.WHATSAPP_API_VERSION || "v21.0"}/${env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ${env.WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ to, type: "text", text: { body: note.slice(0, 3000) } }),
+            }
+          );
+          const j = await r.json().catch(() => ({}));
+          results.push({ channel, to, ok: r.ok, message_id: (j.messages || [{}])[0]?.id || "", error: r.ok ? "" : `whatsapp api ${r.status}` });
+        } catch (e) {
+          results.push({ channel, to, ok: false, error: String((e && e.message) || e) });
+        }
+      } else {
+        results.push({
+          channel,
+          to,
+          ok: false,
+          error: `${channel || "unknown"} delivery needs its credentials as Pages secrets (TELEGRAM_BOT_TOKEN / DISCORD_BOT_TOKEN / WHATSAPP_TOKEN + WHATSAPP_PHONE_NUMBER_ID) or the self-hosted service`,
+        });
+      }
+    }
+    return json({ results, delivered: results.filter((r) => r.ok).length, total: results.length });
   }
 
   if (path === "/safety-check") {

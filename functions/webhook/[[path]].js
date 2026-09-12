@@ -8,6 +8,7 @@
 // the answer, which is exactly what the test-suite asserts.
 
 import { handleMessage } from "../_core/core.js";
+import { deliverTelegram, telegramSecretOk } from "../_core/telegram.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -52,7 +53,7 @@ export async function onRequest(context) {
     return json({ error: "invalid json" }, 400);
   }
 
-  if (path === "/telegram") return telegram(payload, env);
+  if (path === "/telegram") return telegram(payload, env, request);
   if (path === "/discord") return discord(payload, env);
   if (path === "/whatsapp") return whatsapp(payload, raw, request.headers.get("X-Hub-Signature-256") || "", env);
   return json({ error: "not found", path }, 404);
@@ -91,28 +92,20 @@ export function parseTelegram(update) {
   };
 }
 
-async function telegram(update, env) {
+async function telegram(update, env, request) {
+  if (!telegramSecretOk(env, request)) return json({ error: "invalid secret token" }, 401);
   const m = parseTelegram(update);
   if (!m) return json({ ok: true, ignored: true });
   const { reply, session } = handleMessage(m.text, {}, { channel: "telegram", chat_id: m.chat_id });
-  let delivered = false;
-  let error = "";
-  if (env.TELEGRAM_BOT_TOKEN && m.chat_id) {
-    try {
-      const r = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: m.chat_id, text: reply.text.slice(0, 4000) }),
-      });
-      delivered = r.ok;
-      if (!r.ok) error = `telegram api ${r.status}`;
-    } catch (e) {
-      error = String((e && e.message) || e);
-    }
-  } else {
-    error = "TELEGRAM_BOT_TOKEN not set on this Pages project";
-  }
-  return json({ ok: true, delivered, error, session, reply: publicReply(reply) });
+  const d = await deliverTelegram(env, m.chat_id, reply);
+  return json({
+    ok: true,
+    delivered: d.ok,
+    error: d.error || "",
+    message_id: d.message_id || "",
+    session,
+    reply: publicReply(reply),
+  });
 }
 
 /* -------------------------------------------------------------- discord -- */

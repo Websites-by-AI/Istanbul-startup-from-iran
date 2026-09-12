@@ -117,6 +117,25 @@ SUMMARY: dict[str, dict[str, str]] = {
 }
 
 
+# Routes added later still need a localised one-liner (scripts/i18n_audit.py).
+SUMMARY.update(
+    {
+        "greeting": {
+            "fa": "خوش آمدید — میز حقوقی ورود استارتاپ ایران → ترکیه. با /legal شروع کنید؛ زبان پاسخ با /lang fa.",
+            "tr": "Hoş geldiniz — İran → Türkiye Startup Hukuk Masası. /legal ile başlayın; yanıt dili için /lang tr.",
+        },
+        "ecosystem": {
+            "fa": "اسپانسرهای اکوسیستم: شتاب‌دهنده‌ها، تکنوپارک‌ها، دانشگاه‌ها و شبکه‌های سرمایه‌گذار — ظرفیت غیرنقدی برای تیم‌های در حال فرود.",
+            "tr": "Ekosistem sponsorları: hızlandırıcılar, teknoparklar, üniversiteler ve yatırımcı ağları — iniş yapan takımlar için nakit dışı kapasite.",
+        },
+        "advance": {
+            "fa": "وضعیت پرونده حقوقی و مرحله بعدی آن؛ تعیین مسیر نهایی فقط با وکیل دارای پروانه است.",
+            "tr": "Hukuki dosyanın durumu ve bir sonraki adımı; nihai yol kararı yalnızca ruhsatlı avukata aittir.",
+        },
+    }
+)
+
+
 def summary_for(route: str, language: str) -> str:
     """Localised one-liner for a route ('' when English or unknown)."""
     if language == "en":

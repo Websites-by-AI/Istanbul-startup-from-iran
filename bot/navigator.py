@@ -61,6 +61,82 @@ INTENTS: dict[str, list[str]] = {
     "human": ["human", "talk to a person", "agent", "انسان", "کارشناس", "تماس", "gerçek kişi", "insan", "call me"],
 }
 
+# --- Extra Turkish / Persian natural-language phrases -----------------------
+# (slash-commands are language-neutral; these make free-text requests in TR/FA
+#  land on the same route — verified by scripts/i18n_audit.py)
+INTENT_PHRASES: dict[str, list[str]] = {
+    "assessment": [
+        "ön değerlendirme",
+        "on degerlendirme",
+        "iniş öncesi",
+        "inis oncesi",
+        "hukuki değerlendirme",
+        "hukuki degerlendirme",
+        "ارزیابی پیش از ورود",
+        "ارزیابی حقوقی",
+        "سنجش آمادگی",
+    ],
+    "journey": [
+        "adımlı yolculuk",
+        "adimli yolculuk",
+        "iniş yolculuğu",
+        "inis yolculugu",
+        "yolculuğu göster",
+        "6 adım",
+        "altı adım",
+        "adımlı iniş",
+        "مسیر شش مرحله",
+        "مسیر ورود",
+        "مراحل ورود",
+    ],
+    "hotel": [
+        "otel haritası",
+        "otel haritasi",
+        "sponsorlu oda",
+        "sponsorlu odalar",
+        "odalar",
+        "اتاق های اسپانسری",
+        "نقشه هتل ها",
+    ],
+    "ecosystem": [
+        "ekosistem sponsoru",
+        "ekosistem sponsorları",
+        "ekosistem ortakları",
+        "اسپانسرهای اکوسیستم",
+        "اکوسیستم",
+    ],
+    "deck": [
+        "sunum hazırla",
+        "sunum oluştur",
+        "hukuk bürosu sunumu",
+        "hukuk bürosu için sunum",
+        "ارائه بساز",
+        "دک بساز",
+        "برای گروه حقوقی ارائه",
+        "sunum hazırlar",
+    ],
+    "human": [
+        "avukata aktar",
+        "lisanslı avukat",
+        "lisansli avukat",
+        "gerçek kişiye aktar",
+        "insana aktar",
+        "وکیل دارای پروانه",
+        "ارجاع به وکیل",
+        "به وکیل ارجاع",
+        "ارجاع بده",
+    ],
+    "corporate_sponsor": [
+        "sponsor modelleri",
+        "kurumsal sponsorluk",
+        "اسپانسرشیپ شرکتی",
+    ],
+}
+for _intent, _phrases in INTENT_PHRASES.items():
+    _have = INTENTS.setdefault(_intent, [])
+    _have.extend(p for p in _phrases if p not in _have)
+
+
 # Intents whose answers must always be escalated / disclaimed.
 SENSITIVE_INTENTS = {"residence", "legal_desk", "company_formation", "investment", "ip"}
 

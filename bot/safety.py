@@ -110,6 +110,14 @@ TR_WORDS = (
     "başvuru", "basvuru", "değerlendirme", "oturum", "çalışma", "calisma", "yatırım", "yatirim",
     "sponsoru", "takım", "takim", "giriş", "giris", "belge",
 )
+# Extra Turkish markers: suffixes and question forms that carry no diacritics
+# ("sponsor modelleri nelerdir" has no ı/ş/ğ but is unambiguously Turkish).
+TR_WORDS_EXTRA = (
+    "nelerdir", "nedir", "modelleri", "hakkında", "hakkinda", "kimler", "istiyorum", "göster", "goster", "hazırla", "hazirla", "aktar", "yolculuk", "adımlı", "adimli", "sunum", "ekosistem", "haritası", "haritasi", "metrikleri", "başarı", "basari", "ilerlet", "izlenmeli", "kurmak", "kuruluş", "kurulus", "lütfen", "lutfen", "teşekkür", "tesekkur", "mısın", "misin", "hangi", "gerekli", "belgeleri", "aşamaları", "asamalari", "sponsorlu", "ön değerlendirme", "on degerlendirme",
+)
+TR_WORDS = TR_WORDS + TR_WORDS_EXTRA
+
+
 EN_WORDS = (
     " the ", " and ", " for ", " with ", " what ", " which ", " how ", " our ", " your ",
     " in ", " is ", " are ", " want ", " need ", " please ", " startup ", " legal ", " can ",

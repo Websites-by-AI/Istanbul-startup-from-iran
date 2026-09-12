@@ -1,6 +1,7 @@
 # Custom domain: startup.exhibition2world.ir
 
-**Live now:** https://istanbul-startup-from-iran.pages.dev
+**Live now:** https://istanbul-startup-from-iran.pages.dev (full runtime) and
+https://websites-by-ai.github.io/Istanbul-startup-from-iran/ (GitHub Pages mirror)
 **Custom domain:** `startup.exhibition2world.ir` — registered on the Pages project, waiting for one DNS record.
 
 ## Status (checked 2026-09-12)
@@ -12,9 +13,17 @@
 | CNAME record in the `exhibition2world.ir` zone | ❌ **missing — needs DNS:Edit** |
 | TLS certificate (Google CA) | ⏳ issued automatically once the CNAME exists |
 
-Cloudflare reports exactly this: `"CNAME record not set"`. The token currently in use can **read**
-zones/DNS and **deploy** Pages projects, but it cannot **write** DNS records (`403 Authentication
-error`). Nothing else is blocking the domain.
+Cloudflare reports exactly this: `"CNAME record not set"`.
+
+Both API tokens provided so far were tested and **neither can write DNS**:
+
+| Token | Zones | DNS records | Pages deploy |
+|---|---|---|---|
+| `cfat_jnNM…` | read ✅ | read ✅ / write ❌ `403 Authentication error` | ✅ |
+| `cfat_URPZ…` | read ✅ | read ❌ / write ❌ `403 Authentication error` | ✅ |
+
+So the record has to be added by you (option A below) or by a token that has `Zone · DNS · Edit`
+(option B). Nothing else is blocking the domain — both live hosts already work without it.
 
 ## Finish it — option A (30 seconds, in the dashboard)
 
